@@ -1,35 +1,33 @@
-class Debug {
-  init () {
-    this.Logwindow = window.open()
-    this.Logwindow.document.write('<html><head><title>Child Log Window</title></head>\x3Cscript>window.opener.console = console;\x3C/script><body><h1>Child Log Window</h1></body></html>')
+function BYONDDebug() {
+    this.logWindow = window.open();
+    this.logWindow.document.write('<html><head><title>Child Log Window</title></head>\x3Cscript>window.opener.console = console;\x3C/script><body><h1>Child Log Window</h1></body></html>');
 
-    window.onunload = function () {
-      if (this.logWindow && !this.logWindow.closed) {
-        this.logWindow.close()
-      }
+    this.Log = function(message) {
+        if (typeof message == 'object') {
+            this.logWindow.document.write((JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />');
+        } else {
+            this.logWindow.document.write(message + '<br />');
+        }
     }
 
-    window.onerror = function (message, url, lineNumber) {  
-      this.log('Error: ' + message + ' url: ' + url + ' line: ' + lineNumber)
-      return true
-    }
-
-    this.log('BYOND IE Bridge loaded')
-  }
-  log (message) {
-    if (typeof message == 'object') {
-      this.logWindow.document.write((JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br />')
-    } else {
-      this.logWindow.document.write(message + '<br />')
-    }
-  }
+    this.Log('BYOND IE Bridge loaded');
 }
 
-class Detection {
-  init () {
-    this.Debug = new Debug()
-  }
-  debug () {
-    this.Debug.log(location.protocol)
-  }
+debug = new BYONDDebug();
+
+window.onerror = function(message, url, lineNumber) {
+    debug.Log('Error: ' + message + ' url: ' + url + ' line: ' + lineNumber);
+    return true;
+};
+
+window.onunload = function() {
+    if (debug.logWindow && !debug.logWindow.closed) {
+        debug.logWindow.close();
+    }
+};
+
+function Detection() {
+    this.TriggerDebug = function() {
+        debug.Log("Browser Protocol: " + location.protocol);
+    };
 }
