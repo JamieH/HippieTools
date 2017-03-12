@@ -27,6 +27,17 @@ window.onunload = function() {
 };
 
 function Detection() {
+    this.GetFingerprint = function(callback) {
+        new Fingerprint2().get(function(result, components){
+            debug.Log("Fingerprint: " + result);
+            debug.Log("Fingerprint components: ")
+            debug.Log(components);
+
+            if (typeof callback === "function") {
+                callback(result, components);
+            }
+        });
+    }
     this.TriggerDebug = function() {
         debug.Log("Browser Protocol: " + location.protocol);
     };

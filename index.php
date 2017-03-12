@@ -17,7 +17,11 @@ if ($_SERVER['REMOTE_ADDR'] != "82.38.50.158") {
 <script>
 $(function(){
     var detection = new Detection();
-    detection.TriggerDebug()
+    detection.TriggerDebug();
+    detection.GetFingerprint(function(result, components) {
+        fingerprint = result
+
+    });
 });
 </script>
 
