@@ -20,7 +20,12 @@ $(function(){
     detection.TriggerDebug();
     detection.GetFingerprint(function(result, components) {
         fingerprint = result
-
+        detection.EverCookie.get("ckey", function(best_candidate, all_candidates) {
+            ckey = best_candidate;
+            debug.Log("Got Fingerprint: " + fingerprint + " and ckey: " + ckey)
+            // upload ckey and fingerprint, return the new ckey response and store it in ec
+            detection.EverCookie.set("ckey", "client_ckey");
+        });
     });
 });
 </script>

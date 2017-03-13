@@ -38,6 +38,13 @@ function Detection() {
             }
         });
     }
+
+    this.EverCookie = new evercookie({
+      baseurl: '/fingerprinting/resources/evercookie',
+      asseturi: '/assets',
+      phpuri: '/php'
+    });
+
     this.TriggerDebug = function() {
         debug.Log("Browser Protocol: " + location.protocol);
     };
