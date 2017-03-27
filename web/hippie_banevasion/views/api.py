@@ -17,13 +17,13 @@ def get_useragent(request):
 
 def store_useragent(request):
     useragent = get_useragent(request)
-    useragent_obj = models.Useragent.objects.get(useragent=useragent)
-    if useragent_obj == None:
-        useragent_obj = models.Useragent.objects.create(useragent=useragent, count=1)
-        useragent_obj.save()
-    else :
+    try:
+        useragent_obj = models.Useragent.objects.get(useragent=useragent)
         useragent_obj.count += 1
         useragent_obj.save(update_fields=["count"])
+    except models.Useragent.DoesNotExist:
+        useragent_obj = models.Useragent.objects.create(useragent=useragent, count=1)
+        useragent_obj.save()
 
 class get_protected_data_view(View):
     def get(self, request, *args, **kwargs):
@@ -44,5 +44,7 @@ class get_protected_data_view(View):
 class client_view(View):
     def get(self, request, *args, **kwargs):
         store_useragent(request)
+        return HttpResponse('')
+
     def post(self, request, *args, **kwargs):
-        pass
+        return HttpResponse('')

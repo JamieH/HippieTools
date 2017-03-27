@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'hippie_admin.apps.HippieAdminConfig',
-    'django_evercookie'
+    'hippie_banevasion.apps.HippieBanEvasionConfig'
 ]
 
 MIDDLEWARE = [
