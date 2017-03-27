@@ -40,7 +40,7 @@ function Detection() {
     }
 
     this.EverCookie = new evercookie({
-      baseurl: '/fingerprinting/resources/evercookie',
+      baseurl: '/static/js/evercookie',
       asseturi: '/assets',
       phpuri: '/php'
     });

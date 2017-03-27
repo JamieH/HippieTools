@@ -18,5 +18,6 @@ from django.contrib import admin
 from hippie_banevasion.views import api
 
 urlpatterns = [
-    url(r'^api/get_protected_data$', api.get_protected_data_view.as_view(), name='get_protected_data')
+    url(r'^api/get_protected_data$', api.get_protected_data_view.as_view(), name='get_protected_data'),
+    url(r'^api/client$', api.client_view.as_view(), name='client')
 ]

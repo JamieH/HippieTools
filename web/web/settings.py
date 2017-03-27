@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'hippie_admin.apps.HippieAdminConfig',
+    'django_evercookie'
 ]
 
 MIDDLEWARE = [
@@ -120,3 +121,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = './static/'
+
+# TANGO Settings
+TANGO_HMAC_KEY = 'As4XwxFkdw6c2MygpFz4mR67'
+
+# Admin Settings
