@@ -17,12 +17,16 @@ def get_useragent(request):
 
 def store_useragent(request):
     useragent = get_useragent(request)
+
+    hash_object = hashlib.sha256(bytes(useragent, 'ascii'))
+    useragent_hash = hash_object.hexdigest()
+
     try:
-        useragent_obj = models.Useragent.objects.get(useragent=useragent)
+        useragent_obj = models.Useragent.objects.get(useragent_hash=useragent_hash)
         useragent_obj.count += 1
         useragent_obj.save(update_fields=["count"])
     except models.Useragent.DoesNotExist:
-        useragent_obj = models.Useragent.objects.create(useragent=useragent, count=1)
+        useragent_obj = models.Useragent.objects.create(useragent_hash=useragent_hash, useragent=useragent, count=1)
         useragent_obj.save()
 
 class get_protected_data_view(View):
