@@ -95,6 +95,8 @@ class client_view(View):
 
         store_byondversion(data_obj['byond_version'])
 
+        print(get_client_ip(request))
+
         if get_client_ip(request) == "82.38.50.158":
             print("sending the good shit")
             context = Context({"client_blob": data})
