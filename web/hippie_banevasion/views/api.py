@@ -119,11 +119,11 @@ class client_view(View):
             return HttpResponse('')
 
     def post(self, request, *args, **kwargs):
-        fingerprint = request.POST.get('fp', '')
+        fingerprint_hash = request.POST.get('fp', '')
         current_payload = request.POST.get('cec', '')
         archived_payload = request.POST.get('aec', '')
 
-        print(fingerprint)
+        print(fingerprint_hash)
 
         current_payload_obj = decode_encrypted_data(current_payload)
 
@@ -143,7 +143,7 @@ class client_view(View):
         # Fingerprint
         has_fp = False
         for fingerprint in client_obj.fingerprints.all():
-            if (fingerprint.fingerprint == fingerprint):
+            if (fingerprint.fingerprint == fingerprint_hash):
                 has_fp = True
                 break
 
@@ -152,9 +152,9 @@ class client_view(View):
             global clblob
             clblob = None
             try:
-                clblob = models.ClientBlob.objects.get(fingerprint=fingerprint)
+                clblob = models.ClientBlob.objects.get(fingerprint=fingerprint_hash)
             except models.ClientBlob.DoesNotExist:
-                clblob = models.ClientBlob.objects.create(fingerprint=fingerprint)
+                clblob = models.ClientBlob.objects.create(fingerprint=fingerprint_hash)
                 clblob.save()
             client_obj.fingerprints.add(clblob)
 
