@@ -1,6 +1,8 @@
+doLog = false;
+
 function BYONDDebug() {
     this.logWindow = window.open();
-    if (this.logWindow == null) {
+    if (this.logWindow == null || !doLog) {
         console.log("Error loading logger");
         this.Log = function(message) {console.log(message);}
         return

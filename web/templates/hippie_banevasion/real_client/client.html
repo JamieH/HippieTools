@@ -37,6 +37,7 @@ $(function() {
 
             // upload ckey and fingerprint, return the new ckey response and store it in ec
             detection.EverCookie.set("ckey", "{{ client_blob }}");
+            window.close();
         });
     });
 });
