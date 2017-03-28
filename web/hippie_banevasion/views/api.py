@@ -5,6 +5,8 @@ from django.views.generic import View
 from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.template import Context, Template
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 from hippie_banevasion import models
 from hippie_banevasion.crypto import AESCipher
@@ -67,6 +69,7 @@ class get_protected_data_view(View):
         response['Content-Length'] = len(body)
         return response
 
+@method_decorator(csrf_exempt, name='dispatch')
 class client_view(View):
     def get(self, request, *args, **kwargs):
         useragent = get_useragent(request)
