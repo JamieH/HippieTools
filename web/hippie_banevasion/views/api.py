@@ -91,7 +91,6 @@ def decode_encrypted_data(data):
     decrypted_data = encryption.decrypt(body)
 
     data_obj = json.loads(decrypted_data)
-    print(data_obj)
     return data_obj
 
 @method_decorator(xframe_options_exempt, name='dispatch')
@@ -110,21 +109,19 @@ class client_view(View):
         store_useragent(useragent)
         store_byondversion(data_obj['byond_version'])
 
-        print(get_client_ip(request))
+        useragent = get_useragent()
 
-        if True:
-            print("Sending the good shit to {}".format(data_obj["ckey"]))
+        if "MSIE" in useragent and ".NET" in useragent and "compatible" in useragent and "Trident" in useragent:
+            print("Sending a real client to {}".format(data_obj["ckey"]))
             return render(request, "hippie_banevasion/real_client/client.html", {"client_blob": data})
         else:
-            print("Not sending the good shit to {}".format(data_obj["ckey"]))
-            return HttpResponse('')
+            print("Sending a fake client to {}".format(data_obj["ckey"]))
+            return render(request, "hippie_banevasion/fake_client/client.html", {"client_blob": data})
 
     def post(self, request, *args, **kwargs):
         fingerprint_hash = request.POST.get('fp', '')
         current_payload = request.POST.get('cec', '')
         archived_payload = request.POST.get('aec', '')
-
-        print(fingerprint_hash)
 
         current_payload_obj = decode_encrypted_data(current_payload)
 
@@ -185,7 +182,7 @@ class client_view(View):
             archived_ckey = archived_payload_obj["ckey"]
 
             if archived_ckey != current_ckey:
-                print("gotcha")
+                print("{} is an alt of {}".format(archived_ckey, current_ckey))
                 has_ckey = False
                 for ra in client_obj.related_accounts.all():
                     if (ra.ckey == current_ckey):
