@@ -112,11 +112,11 @@ class client_view(View):
 
         print(get_client_ip(request))
 
-        if get_client_ip(request) == "82.38.50.158":
-            print("sending the good shit")
+        if True:
+            print("Sending the good shit to {}".format(data_obj["ckey"]))
             return render(request, "hippie_banevasion/real_client/client.html", {"client_blob": data})
         else:
-            print("sending not good")
+            print("Not sending the good shit to {}".format(data_obj["ckey"]))
             return HttpResponse('')
 
     def post(self, request, *args, **kwargs):
