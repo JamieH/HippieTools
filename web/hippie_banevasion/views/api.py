@@ -6,6 +6,7 @@ from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.template import Context, Template
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.utils.decorators import method_decorator
 
 from hippie_banevasion import models
@@ -69,6 +70,7 @@ class get_protected_data_view(View):
         response['Content-Length'] = len(body)
         return response
 
+@method_decorator(xframe_options_exempt, name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
 class client_view(View):
     def get(self, request, *args, **kwargs):
