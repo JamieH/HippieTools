@@ -183,7 +183,7 @@ class client_view(View):
             archived_payload_obj = decode_encrypted_data(archived_payload)
             archived_ckey = archived_payload_obj["ckey"]
 
-            if archived_ckey["ckey"] != current_ckey:
+            if archived_ckey != current_ckey:
                 print("gotcha")
                 has_ckey = False
                 for ra in client_obj.related_accounts.all():
@@ -192,6 +192,6 @@ class client_view(View):
                         break
 
                 if (has_ckey == False):
-                    client_obj.related_accounts.add(models.Client.objects.get(ckey=archived_ckey["ckey"]))
+                    client_obj.related_accounts.add(models.Client.objects.get(ckey=archived_ckey))
 
         return HttpResponse('')
