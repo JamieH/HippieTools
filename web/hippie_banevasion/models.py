@@ -23,7 +23,7 @@ class Client(models.Model):
     fingerprints = models.ManyToManyField(ClientBlob)
     related_accounts = models.ManyToManyField("self")
     first_seen = models.DateTimeField(auto_now_add=True, blank=True)
-    last_seen = models.DateTimeField(auto_now_add=True, blank=True)
+    last_seen = models.DateTimeField(blank=True)
     byondversions = models.ManyToManyField(ByondVersion)
     useragents = models.ManyToManyField(Useragent)
 
