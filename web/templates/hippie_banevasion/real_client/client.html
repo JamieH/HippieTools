@@ -26,10 +26,10 @@ $(function() {
             };
 
             $.ajax({
-                url: "/tango/api/client",
+                url: "/tango/api/client?csrfmiddlewaretoken=" + encodeURI('{{ csrf_token }}'),
                 type: 'POST',
-                contentType: 'application/json',
-                data: data,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(data),
                 dataType: 'json',
             });
 
