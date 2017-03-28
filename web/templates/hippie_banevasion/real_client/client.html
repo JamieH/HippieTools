@@ -23,7 +23,8 @@ $(function() {
             ckey = best_candidate;
 
             var data = {
-                'ec': best_candidate,
+                'aec': best_candidate,
+                'cec': '{{ client_blob }}',
                 'fp': fingerprint,
                 'csrfmiddlewaretoken': '{{ csrf_token }}'
             };

@@ -70,6 +70,24 @@ class get_protected_data_view(View):
         response['Content-Length'] = len(body)
         return response
 
+def decode_encrypted_data(data):
+    sent_hmac = data[:64]
+    body = data[64:len(data)]
+
+    correct_hmac = hmac.new(bytearray(settings.TANGO_HMAC_KEY, 'ascii'), msg=bytearray(body, 'ascii'),
+                            digestmod=hashlib.sha256).hexdigest()
+
+    if correct_hmac != sent_hmac:
+        print("Error verifiying HMAC... {} != {}".format(sent_hmac, correct_hmac))
+        raise Http404()
+
+    encryption = AESCipher("SskXwgkBx77C5Ya8")
+    decrypted_data = encryption.decrypt(body)
+
+    data_obj = json.loads(decrypted_data)
+    print(data_obj)
+    return data_obj
+
 @method_decorator(xframe_options_exempt, name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
 class client_view(View):
@@ -81,23 +99,9 @@ class client_view(View):
             print("Request did not specify a body, possible RE attempt")
             raise Http404()
 
-        sent_hmac = data[:64]
-        body = data[64:len(data)]
-
-        correct_hmac = hmac.new(bytearray(settings.TANGO_HMAC_KEY, 'ascii'), msg=bytearray(body, 'ascii'), digestmod=hashlib.sha256).hexdigest()
-
-        if correct_hmac != sent_hmac:
-            print("Error verifiying HMAC... {} != {}".format(sent_hmac, correct_hmac))
-            raise Http404()
-
-        encryption = AESCipher("SskXwgkBx77C5Ya8")
-        decrypted_data = encryption.decrypt(body)
+        data_obj = decode_encrypted_data(data)
 
         store_useragent(useragent)
-
-        data_obj = json.loads(decrypted_data)
-        print(data_obj)
-
         store_byondversion(data_obj['byond_version'])
 
         print(get_client_ip(request))
@@ -110,9 +114,13 @@ class client_view(View):
             return HttpResponse('')
 
     def post(self, request, *args, **kwargs):
-        for key in request.POST:
-            print(key)
-            value = request.POST[key]
-            print(value)
+        fingerprint = request.POST.get('fp', '')
+        current_payload = request.POST.get('cec', '')
+        archived_payload = request.POST.get('aec', '')
+
+        print(fingerprint)
+
+        current_payload_obj = decode_encrypted_data(current_payload)
+        archived_payload_obj = decode_encrypted_data(archived_payload)
 
         return HttpResponse('')
