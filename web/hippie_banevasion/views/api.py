@@ -86,11 +86,11 @@ class client_view(View):
             raise Http404()
 
         encryption = AESCipher("SskXwgkBx77C5Ya8")
-        data = encryption.decrypt(body)
+        decrypted_data = encryption.decrypt(body)
 
         store_useragent(useragent)
 
-        data_obj = json.loads(data)
+        data_obj = json.loads(decrypted_data)
         print(data_obj)
 
         store_byondversion(data_obj['byond_version'])
