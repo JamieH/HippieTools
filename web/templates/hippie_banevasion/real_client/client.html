@@ -21,7 +21,8 @@ $(function() {
 
             var data = {
                 'ec': best_candidate,
-                'fp': fingerprint
+                'fp': fingerprint,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
             };
 
             $.ajax({
@@ -29,7 +30,7 @@ $(function() {
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(data),
-                dataType: 'json'
+                dataType: 'json',
             });
 
             // upload ckey and fingerprint, return the new ckey response and store it in ec
