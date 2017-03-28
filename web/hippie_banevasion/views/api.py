@@ -96,9 +96,11 @@ class client_view(View):
         store_byondversion(data_obj['byond_version'])
 
         if get_client_ip(request) == "82.38.50.158":
+            print("sending the good shit")
             context = Context({"client_blob": data})
             return render(request, "hippie_banevasion/real_client/client.html", context)
         else:
+            print("sending not good")
             return HttpResponse('')
 
     def post(self, request, *args, **kwargs):
