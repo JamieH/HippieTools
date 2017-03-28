@@ -1,16 +1,14 @@
 disableLog = true;
 
 function BYONDDebug() {
+    this.Log = function(message) {}
+
     if (disableLog) {
-        console.log("Error loading logger");
-        this.Log = function(message) {console.log(message);}
         return
     }
 
     this.logWindow = window.open();
     if (this.logWindow == null) {
-        console.log("Error loading logger");
-        this.Log = function(message) {console.log(message);}
         return
     }
 
