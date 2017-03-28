@@ -134,7 +134,7 @@ class client_view(View):
         try:
             client_obj = models.Client.objects.get(ckey=current_ckey)
         except models.Client.DoesNotExist:
-            client_obj = models.ByondVersion.objects.create(ckey=current_ckey)
+            client_obj = models.Client.objects.create(ckey=current_ckey)
             client_obj.save()
 
         client_obj.last_seen = time.time()
