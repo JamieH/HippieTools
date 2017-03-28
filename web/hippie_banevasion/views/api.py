@@ -16,6 +16,7 @@ import json
 import time
 import hmac
 import hashlib
+import datetime
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -133,10 +134,10 @@ class client_view(View):
 
         try:
             client_obj = models.Client.objects.get(ckey=current_ckey)
-            client_obj.last_seen = time.time()
+            client_obj.last_seen = datetime.datetime.now()
             client_obj.save(update_fields=["last_seen"])
         except models.Client.DoesNotExist:
-            client_obj = models.Client.objects.create(ckey=current_ckey, last_seen=time.time())
+            client_obj = models.Client.objects.create(ckey=current_ckey, last_seen=datetime.datetime.now())
             client_obj.save()
 
         # Fingerprint
