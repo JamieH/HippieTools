@@ -14,6 +14,10 @@ class ByondVersion(models.Model):
     count = models.IntegerField()
 
 
+class ClientBlob(models.Model):
+    fingerprint = models.CharField(max_length=32, unique=True)
+
+
 class Client(models.Model):
     ckey = models.CharField(max_length=255, unique=True)
     fingerprints = models.ManyToManyField(ClientBlob)
@@ -24,5 +28,4 @@ class Client(models.Model):
     useragents = models.ManyToManyField(Useragent)
 
 
-class ClientBlob(models.Model):
-    fingerprint = models.CharField(max_length=32, unique=True)
+
