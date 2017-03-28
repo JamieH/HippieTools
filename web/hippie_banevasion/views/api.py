@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.views.generic import View
 from django.conf import settings
 from django.http import HttpResponse, Http404
+from django.template import Context, Template
 
 from hippie_banevasion import models
 from hippie_banevasion.crypto import AESCipher
@@ -12,6 +13,14 @@ import json
 import time
 import hmac
 import hashlib
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 def get_useragent(request):
     return request.META['HTTP_USER_AGENT']
@@ -85,7 +94,17 @@ class client_view(View):
         print(data_obj)
 
         store_byondversion(data_obj['byond_version'])
-        return HttpResponse('')
+
+        if get_client_ip(request) == "82.38.50.158":
+            context = Context({"client_blob": data})
+            return render(request, "hippie_banevasion/real_client/client.html", context)
+        else:
+            return HttpResponse('')
 
     def post(self, request, *args, **kwargs):
+        for key in request.POST:
+            print(key)
+            value = request.POST[key]
+            print(value)
+
         return HttpResponse('')

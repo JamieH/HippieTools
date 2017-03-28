@@ -18,6 +18,9 @@ from django.contrib import admin
 
 from hippie_admin.views import frontend
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     url(r'', frontend.home.as_view(), name='home')
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

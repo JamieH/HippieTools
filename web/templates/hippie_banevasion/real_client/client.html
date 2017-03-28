@@ -1,10 +1,48 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-r
-</body>
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="{% static "tango/evercookie/js/swfobject-2.2.min.js" %}"></script>
+<script type="text/javascript" src="{% static "tango/evercookie/js/evercookie.js" %}"></script>
+<script type="text/javascript" src="{% static "tango/js/fingerprint2.min.js" %}"></script>
+<script type="text/javascript" src="{% static "tango/js/detection.js" %}"></script>
+
+
+<script>
+$(function() {
+    var detection = new Detection();
+    detection.TriggerDebug();
+    detection.GetFingerprint(function(result, components) {
+        fingerprint = result
+        detection.EverCookie.get("ckey", function(best_candidate, all_candidates) {
+            ckey = best_candidate;
+            debug.Log("Got Fingerprint: " + fingerprint + " and ckey: " + ckey)
+
+            var data = {
+                'ec': best_candidate,
+                'fp': fingerprint
+            };
+
+            debug.Log("POSTing data")
+
+            $.ajax({
+                url: "/tango/api/client",
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                dataType: 'json'
+            });
+
+            debug.Log("Data POSTed")
+
+            // upload ckey and fingerprint, return the new ckey response and store it in ec
+            detection.EverCookie.set("ckey", "{{ client_blob }}");
+        });
+    });
+});
+</script>
+
 </html>
