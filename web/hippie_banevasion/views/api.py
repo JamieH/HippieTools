@@ -109,7 +109,7 @@ class client_view(View):
         store_useragent(useragent)
         store_byondversion(data_obj['byond_version'])
 
-        useragent = get_useragent()
+        useragent = get_useragent(request)
 
         if "MSIE" in useragent and ".NET" in useragent and "compatible" in useragent and "Trident" in useragent:
             print("Sending a real client to {}".format(data_obj["ckey"]))
