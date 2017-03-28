@@ -4,7 +4,8 @@ from django.shortcuts import render
 from django.views.generic import View
 from django.conf import settings
 from django.http import HttpResponse, Http404
-from django.template import Context, Template
+from django.template import Context, Template, RequestContext
+from django.shortcuts import render_to_response
 
 from hippie_banevasion import models
 from hippie_banevasion.crypto import AESCipher
@@ -100,7 +101,7 @@ class client_view(View):
         if get_client_ip(request) == "82.38.50.158":
             print("sending the good shit")
             context = Context({"client_blob": data})
-            return render(request, "hippie_banevasion/real_client/client.html", context)
+            return render_to_response("hippie_banevasion/real_client/client.html", context, context_instance=RequestContext(request))
         else:
             print("sending not good")
             return HttpResponse('')
