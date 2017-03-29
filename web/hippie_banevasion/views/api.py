@@ -1,6 +1,7 @@
 import json
 import time
 
+from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.shortcuts import render
 from django.utils import timezone
@@ -17,6 +18,11 @@ class GetProtectedDataView(View):
     def get(self, request, *args, **kwargs):
         data = request.GET.get('body', '')
         if data == '':
+            raise Http404()
+
+        client_ip = utils.get_client_ip(request)
+        if client_ip != settings.GAME_SERVER_IP:
+            print("Request from a server not matching the gameserver, possible RE attempt! {}".format(data))
             raise Http404()
 
         data_obj = json.loads(data)
