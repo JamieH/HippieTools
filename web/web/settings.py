@@ -125,5 +125,6 @@ STATIC_ROOT = './static/'
 
 # TANGO Settings
 TANGO_HMAC_KEY = 'As4XwxFkdw6c2MygpFz4mR67'
+TANGO_AES_KEY = "SskXwgkBx77C5Ya8"
 
 # Admin Settings

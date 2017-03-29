@@ -8,6 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
+from django.conf import settings
 
 from hippie_banevasion import models
 from hippie_banevasion.utils.crypto import AESCipher
@@ -24,7 +25,7 @@ class GetProtectedDataView(View):
         data_obj['time'] = time.time()
         data = json.dumps(data_obj)
 
-        encryption = AESCipher("SskXwgkBx77C5Ya8")
+        encryption = AESCipher(settings.TANGO_AES_KEY)
         data = encryption.encrypt(data)
 
         dig = utils.calculate_hmac(data)
