@@ -94,7 +94,7 @@ class ClientView(View):
 
         current_ckey = current_payload_obj["ckey"]
 
-        time_spent = time.time() - current_payload['time']
+        time_spent = time.time() - current_payload_obj['time']
         if time_spent > 59:
             print("Possible replay attack from {}".format(current_ckey))
         else:
