@@ -54,7 +54,8 @@ function Detection() {
     this.EverCookie = new evercookie({
       baseurl: '/static/tango/evercookie',
       asseturi: '/assets',
-      phpuri: '/php'
+      phpuri: '/php',
+      history: false
     });
 
     this.TriggerDebug = function() {
