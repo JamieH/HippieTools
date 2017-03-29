@@ -44,9 +44,17 @@ class ClientView(View):
         data_obj = utils.decode_encrypted_data(data)
         current_ckey = data_obj["ckey"]
 
+        client_obj, created = models.Client.objects.get_or_create(ckey=current_ckey)
+        if created is False:
+            client_obj.last_seen = timezone.now()
+            client_obj.save(update_fields=["last_seen"])
+
         time_spent = time.time() - data_obj['time']
         if time_spent > 59:
             print("Possible replay attack from {}".format(current_ckey))
+            client_obj.reverse_engineer = True
+            client_obj.save(update_fields=["reverse_engineer"])
+            raise Http404()
         else:
             print("Time spent waiting for the server to send the client: {}".format(time_spent))
 
@@ -56,11 +64,6 @@ class ClientView(View):
 
         utils.store_useragent(useragent)
         utils.store_byondversion(data_obj['byond_version'])
-
-        client_obj, created = models.Client.objects.get_or_create(ckey=current_ckey)
-        if created is False:
-            client_obj.last_seen = timezone.now()
-            client_obj.save(update_fields=["last_seen"])
 
         # BYOND Version
         byond_version = models.ByondVersion.objects.get(byondversion=data_obj['byond_version'])
@@ -93,14 +96,17 @@ class ClientView(View):
         current_payload_obj = utils.decode_encrypted_data(current_payload)
 
         current_ckey = current_payload_obj["ckey"]
+        client_obj, created = models.Client.objects.get_or_create(ckey=current_ckey)
 
         time_spent = time.time() - current_payload_obj['time']
         if time_spent > 59:
             print("Possible replay attack from {}".format(current_ckey))
+            client_obj.reverse_engineer = True
+            client_obj.save(update_fields=["reverse_engineer"])
+            raise Http404()
         else:
             print("Time spent waiting for the client to post a hash: {}".format(time_spent))
 
-        client_obj, created = models.Client.objects.get_or_create(ckey=current_ckey)
         if created is False:
             client_obj.last_seen = timezone.now()
             client_obj.save(update_fields=["last_seen"])
