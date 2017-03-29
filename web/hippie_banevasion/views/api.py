@@ -57,12 +57,12 @@ class ClientView(View):
 
         time_spent = time.time() - data_obj['time']
         if time_spent > 59:
-            print("Possible replay attack from {}".format(current_ckey))
+            print("GET: Possible replay attack from {} - {} seconds".format(current_ckey, time_spent))
             client_obj.reverse_engineer = True
             client_obj.save(update_fields=["reverse_engineer"])
             raise Http404()
         else:
-            print("Time spent waiting for the server to send the client: {}".format(time_spent))
+            print("GET: Time spent waiting for the server to send the client: {}".format(time_spent))
 
         data_obj['time'] = time.time()
         data = json.dumps(data_obj)
@@ -106,12 +106,12 @@ class ClientView(View):
 
         time_spent = time.time() - current_payload_obj['time']
         if time_spent > 30:
-            print("Possible replay attack from {}".format(current_ckey))
+            print("POST: Possible replay attack from {} - {} seconds".format(current_ckey, time_spent))
             client_obj.reverse_engineer = True
             client_obj.save(update_fields=["reverse_engineer"])
             raise Http404()
         else:
-            print("Time spent waiting for the client to post a hash: {}".format(time_spent))
+            print("POST: Time spent waiting for the client to post a hash: {}".format(time_spent))
 
         if created is False:
             client_obj.last_seen = timezone.now()
