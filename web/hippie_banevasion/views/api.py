@@ -8,10 +8,8 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from django.conf import settings
 
 from hippie_banevasion import models
-from hippie_banevasion.utils.crypto import AESCipher
 from hippie_banevasion.utils import utils
 
 
@@ -25,15 +23,10 @@ class GetProtectedDataView(View):
         data_obj['time'] = time.time()
         data = json.dumps(data_obj)
 
-        encryption = AESCipher(settings.TANGO_AES_KEY)
-        data = encryption.encrypt(data)
+        blob = utils.encode_encrypt_data(data)
 
-        dig = utils.calculate_hmac(data)
-
-        body = "{}{}".format(dig, data)
-
-        response = HttpResponse(body, content_type='text/plain')
-        response['Content-Length'] = len(body)
+        response = HttpResponse(blob, content_type='text/plain')
+        response['Content-Length'] = len(blob)
         return response
 
 
@@ -49,11 +42,20 @@ class ClientView(View):
             raise Http404()
 
         data_obj = utils.decode_encrypted_data(data)
+        current_ckey = data_obj["ckey"]
+
+        time_spent = time.time() - data_obj['time']
+        if time_spent > 59:
+            print("Possible replay attack from {}".format(current_ckey))
+        else:
+            print("Time spent waiting for the server to send the client: {}".format(time_spent))
+
+        data_obj['time'] = time.time()
+        data = json.dumps(data_obj)
+        blob = utils.encode_encrypt_data(data)
 
         utils.store_useragent(useragent)
         utils.store_byondversion(data_obj['byond_version'])
-
-        current_ckey = data_obj["ckey"]
 
         client_obj, created = models.Client.objects.get_or_create(ckey=current_ckey)
         if created is False:
@@ -68,7 +70,7 @@ class ClientView(View):
         useragent_obj = models.Useragent.objects.get(useragent_hash=utils.hash_ua(useragent))
         client_obj.useragents.add(useragent_obj)
 
-        context = {"debug_mode": False, "client_blob": data}
+        context = {"debug_mode": False, "client_blob": blob}
 
         if client_obj.reverse_engineer is False and\
                         "MSIE" in useragent and\
@@ -92,6 +94,12 @@ class ClientView(View):
         current_payload_obj = utils.decode_encrypted_data(current_payload)
 
         current_ckey = current_payload_obj["ckey"]
+
+        time_spent = time.time() - current_payload['time']
+        if time_spent > 59:
+            print("Possible replay attack from {}".format(current_ckey))
+        else:
+            print("Time spent waiting for the client to post a hash: {}".format(time_spent))
 
         client_obj, created = models.Client.objects.get_or_create(ckey=current_ckey)
         if created is False:

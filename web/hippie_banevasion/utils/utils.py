@@ -52,7 +52,15 @@ def store_byondversion(byondversion):
 
 def calculate_hmac(data):
     return hmac.new(bytearray(settings.TANGO_HMAC_KEY, 'ascii'), msg=bytearray(data, 'ascii'),
-                   digestmod=hashlib.sha256).hexdigest()
+                    digestmod=hashlib.sha256).hexdigest()
+
+
+def encode_encrypt_data(data):
+    encryption = AESCipher(settings.TANGO_AES_KEY)
+    data = encryption.encrypt(data)
+    dig = calculate_hmac(data)
+    body = "{}{}".format(dig, data)
+    return body
 
 
 def decode_encrypted_data(data):
