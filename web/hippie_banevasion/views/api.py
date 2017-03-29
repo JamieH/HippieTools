@@ -108,7 +108,14 @@ class ClientView(View):
 
             if archived_ckey != current_ckey:
                 print("{} is an alt of {}".format(archived_ckey, current_ckey))
-                client_obj.related_accounts.add(models.Client.objects.get(ckey=archived_ckey))
+                alt_client_obj = models.Client.objects.get(ckey=archived_ckey)
+
+                if alt_client_obj.reverse_engineer:
+                    print("Reverse Engineer alt account detected: {}".format(current_ckey))
+                    client_obj.reverse_engineer = True
+                    client_obj.save(update_fields=["reverse_engineer"])
+
+                client_obj.related_accounts.add(alt_client_obj)
 
         # Lastpost
         client_obj.last_post = timezone.now()
