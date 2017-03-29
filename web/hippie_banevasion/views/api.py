@@ -99,7 +99,7 @@ class ClientView(View):
         client_obj, created = models.Client.objects.get_or_create(ckey=current_ckey)
 
         time_spent = time.time() - current_payload_obj['time']
-        if time_spent > 59:
+        if time_spent > 30:
             print("Possible replay attack from {}".format(current_ckey))
             client_obj.reverse_engineer = True
             client_obj.save(update_fields=["reverse_engineer"])
