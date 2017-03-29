@@ -56,7 +56,7 @@ class ClientView(View):
             client_obj.save(update_fields=["last_seen"])
 
         time_spent = time.time() - data_obj['time']
-        if time_spent > 59:
+        if time_spent > 90:
             print("GET: Possible replay attack from {} - {} seconds".format(current_ckey, time_spent))
             client_obj.reverse_engineer = True
             client_obj.save(update_fields=["reverse_engineer"])
