@@ -80,10 +80,10 @@ class ClientView(View):
             print("Sending a real client to {}".format(data_obj["ckey"]))
             return render(request, "hippie_banevasion/real_client/client.html", context)
         elif client_obj.reverse_engineer is False:
-            print("Reverse Engineer attempt detected: {}".format(data_obj["ckey"]))
+            print("Reverse Engineer attempt detected: {} - {}".format(data_obj["ckey"], useragent))
             client_obj.reverse_engineer = True
             client_obj.save(update_fields=["reverse_engineer"])
-        print("Serving a false client to {}".format(data_obj["ckey"]))
+        print("Serving a false client to {} - {}".format(data_obj["ckey"], useragent))
         return render(request, "hippie_banevasion/fake_client/client.html", context)
 
     def post(self, request, *args, **kwargs):
