@@ -1,8 +1,8 @@
-import base64
 import hashlib
 import binascii
 from Crypto import Random
 from Crypto.Cipher import AES
+
 
 class AESCipher(object):
 
