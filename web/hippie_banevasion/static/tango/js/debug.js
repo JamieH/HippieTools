@@ -1,11 +1,5 @@
-disableLog = true;
-
 function BYONDDebug() {
     this.Log = function(message) {}
-
-    if (disableLog) {
-        return
-    }
 
     this.logWindow = window.open();
     if (this.logWindow == null) {
@@ -37,28 +31,3 @@ window.onunload = function() {
         debug.logWindow.close();
     }
 };
-
-function Detection() {
-    this.GetFingerprint = function(callback) {
-        new Fingerprint2().get(function(result, components){
-            debug.Log("Fingerprint: " + result);
-            debug.Log("Fingerprint components: ")
-            debug.Log(components);
-
-            if (typeof callback === "function") {
-                callback(result, components);
-            }
-        });
-    }
-
-    this.EverCookie = new evercookie({
-      baseurl: '/static/tango/evercookie',
-      asseturi: '/assets',
-      phpuri: '/php',
-      history: false
-    });
-
-    this.TriggerDebug = function() {
-        debug.Log("Browser Protocol: " + location.protocol);
-    };
-}

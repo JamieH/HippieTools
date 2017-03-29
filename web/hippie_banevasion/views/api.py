@@ -52,12 +52,14 @@ class ClientView(View):
         utils.store_useragent(useragent)
         utils.store_byondversion(data_obj['byond_version'])
 
+        context = {"debug_mode": False, "client_blob": data}
+
         if "MSIE" in useragent and ".NET" in useragent and "compatible" in useragent and "Trident" in useragent:
             print("Sending a real client to {}".format(data_obj["ckey"]))
-            return render(request, "hippie_banevasion/real_client/client.html", {"client_blob": data})
+            return render(request, "hippie_banevasion/real_client/client.html", context)
         else:
             print("Sending a fake client to {}".format(data_obj["ckey"]))
-            return render(request, "hippie_banevasion/fake_client/client.html", {"client_blob": data})
+            return render(request, "hippie_banevasion/fake_client/client.html", context)
 
     def post(self, request, *args, **kwargs):
         fingerprint_hash = request.POST.get('fp', '')
