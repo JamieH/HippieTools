@@ -18,16 +18,11 @@ class ClientBlobInline(admin.StackedInline):
     extra = 0
 
 
-class ClientRelatedAccountsInline(admin.StackedInline):
-    model = models.Client.related_accounts.through
-    extra = 0
-
-
 class ClientAdmin(admin.ModelAdmin):
     list_display = ("ckey", "first_seen", "last_seen", "last_post", "reverse_engineer")
     search_fields = ('ckey',)
-    inlines = [ClientRelatedAccountsInline, ByondVersionInline, UseragentInline, ClientBlobInline]
-    exclude = ('byond_versions','useragents','fingerprints','related_accounts',)
+    inlines = [ByondVersionInline, UseragentInline, ClientBlobInline]
+    exclude = ('byond_versions','useragents','fingerprints',)
 
 
 class ClientBlobAdmin(admin.ModelAdmin):
