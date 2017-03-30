@@ -5,14 +5,17 @@ from hippie_banevasion import models
 
 class ByondVersionInline(admin.StackedInline):
     model = models.Client.byond_versions.through
+    extra = 0
 
 
 class UseragentInline(admin.StackedInline):
     model = models.Client.useragents.through
+    extra = 0
 
 
 class ClientBlobInline(admin.StackedInline):
     model = models.Client.fingerprints.through
+    extra = 0
 
 
 class ClientAdmin(admin.ModelAdmin):
