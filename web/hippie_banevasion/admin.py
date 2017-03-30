@@ -6,7 +6,7 @@ from hippie_banevasion import models
 # Register your models here.
 
 
-class ByondVersionInline(admin.StackedInline):
+class ByondVersionInline(admin.TabularInline):
     model = models.Client.byond_versions.through
     extra = 0
     readonly_fields = ['link']
@@ -19,7 +19,7 @@ class ByondVersionInline(admin.StackedInline):
     link.allow_tags = True
 
 
-class UseragentInline(admin.StackedInline):
+class UseragentInline(admin.TabularInline):
     model = models.Client.useragents.through
     extra = 0
     readonly_fields = ['link']
@@ -32,7 +32,7 @@ class UseragentInline(admin.StackedInline):
     link.allow_tags = True
 
 
-class ClientBlobInline(admin.StackedInline):
+class ClientBlobInline(admin.TabularInline):
     model = models.Client.fingerprints.through
     extra = 0
     readonly_fields = ['link']
