@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.html import mark_safe
+
 from hippie_banevasion import models
 # Register your models here.
 
@@ -6,16 +9,40 @@ from hippie_banevasion import models
 class ByondVersionInline(admin.StackedInline):
     model = models.Client.byond_versions.through
     extra = 0
+    readonly_fields = ['link']
+
+    def link(self, obj):
+        url = reverse(...)
+        return mark_safe("<a href='%s'>view</a>" % url)
+
+    # the following is necessary if 'link' method is also used in list_display
+    link.allow_tags = True
 
 
 class UseragentInline(admin.StackedInline):
     model = models.Client.useragents.through
     extra = 0
+    readonly_fields = ['link']
+
+    def link(self, obj):
+        url = reverse(...)
+        return mark_safe("<a href='%s'>view</a>" % url)
+
+    # the following is necessary if 'link' method is also used in list_display
+    link.allow_tags = True
 
 
 class ClientBlobInline(admin.StackedInline):
     model = models.Client.fingerprints.through
     extra = 0
+    readonly_fields = ['link']
+
+    def link(self, obj):
+        url = reverse(...)
+        return mark_safe("<a href='%s'>view</a>" % url)
+
+    # the following is necessary if 'link' method is also used in list_display
+    link.allow_tags = True
 
 
 class ClientAdmin(admin.ModelAdmin):
