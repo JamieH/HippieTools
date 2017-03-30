@@ -11,6 +11,9 @@ class Useragent(models.Model):
     def __str__(self):
         return self.useragent
 
+    class Meta:
+        default_permissions = ('add', 'change', 'delete', 'view')
+
 
 class ByondVersion(models.Model):
     byondversion = models.IntegerField(unique=True)
@@ -19,12 +22,18 @@ class ByondVersion(models.Model):
     def __str__(self):
         return "{}".format(self.byondversion)
 
+    class Meta:
+        default_permissions = ('add', 'change', 'delete', 'view')
+
 
 class ClientBlob(models.Model):
     fingerprint = models.CharField(max_length=32, unique=True)
 
     def __str__(self):
         return self.fingerprint
+
+    class Meta:
+        default_permissions = ('add', 'change', 'delete', 'view')
 
 
 class Client(models.Model):
@@ -40,3 +49,6 @@ class Client(models.Model):
 
     def __str__(self):
         return self.ckey
+
+    class Meta:
+        default_permissions = ('add', 'change', 'delete', 'view')
