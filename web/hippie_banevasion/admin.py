@@ -19,7 +19,7 @@ class ClientBlobInline(admin.StackedInline):
 
 
 class ClientRelatedAccountsInline(admin.StackedInline):
-    model = models.Client.related_accounts.though
+    model = models.Client.related_accounts.through
     extra = 0
 
 
