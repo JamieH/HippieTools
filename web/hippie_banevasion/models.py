@@ -8,14 +8,23 @@ class Useragent(models.Model):
     useragent = models.TextField()
     count = models.IntegerField()
 
+    def __str__(self):
+        return self.useragent
+
 
 class ByondVersion(models.Model):
     byondversion = models.IntegerField(unique=True)
     count = models.IntegerField()
 
+    def __str__(self):
+        return self.byondversion
+
 
 class ClientBlob(models.Model):
     fingerprint = models.CharField(max_length=32, unique=True)
+
+    def __str__(self):
+        return self.fingerprint
 
 
 class Client(models.Model):
@@ -28,3 +37,6 @@ class Client(models.Model):
     byond_versions = models.ManyToManyField(ByondVersion)
     useragents = models.ManyToManyField(Useragent)
     reverse_engineer = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.ckey
