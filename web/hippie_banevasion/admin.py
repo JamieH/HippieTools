@@ -4,36 +4,32 @@ from hippie_banevasion import models
 
 
 class ByondVersionInline(admin.StackedInline):
-    model = models.ByondVersion
+    model = models.Client.byond_versions.through
 
 
 class UseragentInline(admin.StackedInline):
-    model = models.Useragent
+    model = models.Client.useragents.through
 
 
 class ClientBlobInline(admin.StackedInline):
-    model = models.ClientBlob
-
-
-class ClientInline(admin.StackedInline):
-    model = models.Client
+    model = models.Client.fingerprints.through
 
 
 class ClientAdmin(admin.ModelAdmin):
     list_display = ("ckey", "first_seen", "last_seen", "last_post", "reverse_engineer")
-    inlines = ("ByondVersionInline", "UseragentInline", "ClientBlobInline",)
+    inlines = [ByondVersionInline, UseragentInline, ClientBlobInline]
 
 
 class ClientBlobAdmin(admin.ModelAdmin):
-    inlines = ("ClientInline",)
+    inlines = [ClientBlobInline]
 
 
 class UseragentAdmin(admin.ModelAdmin):
-    inlines = ("ClientInline",)
+    inlines = [UseragentInline]
 
 
 class ByondVersionAdmin(admin.ModelAdmin):
-    inlines = ("ClientInline",)
+    inlines = [ByondVersionInline]
 
 
 admin.site.register(models.Client, ClientAdmin)

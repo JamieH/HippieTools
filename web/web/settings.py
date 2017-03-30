@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import raven
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'hippie_admin.apps.HippieAdminConfig',
     'hippie_banevasion.apps.HippieBanEvasionConfig',
+    'raven.contrib.django.raven_compat',
 ]
 
 MIDDLEWARE = [
@@ -129,3 +131,11 @@ TANGO_AES_KEY = "SskXwgkBx77C5Ya8"
 GAME_SERVER_IP = "188.165.125.214"
 
 # Admin Settings
+
+# Sentry.io
+RAVEN_CONFIG = {
+    'dsn': 'https://ba82f1eed84e4f0ca3f1a981e3833b95:53f6ce287b544bbab6438799616d6426@sentry.io/152549',
+    # If you are using git, you can also automatically configure the
+    # release based on the git info.
+    'release': raven.fetch_git_sha(os.path.dirname("../{}".format(os.pardir))),
+}
