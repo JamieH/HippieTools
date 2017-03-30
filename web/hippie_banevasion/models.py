@@ -17,7 +17,7 @@ class ByondVersion(models.Model):
     count = models.IntegerField()
 
     def __str__(self):
-        return self.byondversion
+        return "{}".format(self.byondversion)
 
 
 class ClientBlob(models.Model):
