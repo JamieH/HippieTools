@@ -36,6 +36,35 @@ class GetProtectedDataView(View):
         return response
 
 
+class GetAlts(View):
+    def get(self, request, *args, **kwargs):
+        ckey = request.GET.get('ckey', '')
+        if ckey == '':
+            raise Http404()
+
+        client_ip = utils.get_client_ip(request)
+        if client_ip != settings.GAME_SERVER_IP:
+            print("Request from a server not matching the gameserver, possible RE attempt! {}".format(ckey))
+            raise Http404()
+
+        alt_list = []
+
+        try:
+            client = models.Client.objects.get(ckey=ckey)
+            alts = client.related_accounts.all()
+            if len(alts) > 0:
+                for alt in alts:
+                    alt_list += alt.ckey
+        except models.Client.DoesNotExist:
+            pass
+
+        data = json.dumps(alt_list)
+
+        response = HttpResponse(data, content_type='text/plain')
+        response['Content-Length'] = len(data)
+        return response
+
+
 @method_decorator(xframe_options_exempt, name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
 class ClientView(View):

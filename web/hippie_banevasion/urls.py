@@ -19,5 +19,6 @@ from hippie_banevasion.views import api
 
 urlpatterns = [
     url(r'^api/get_protected_data$', api.GetProtectedDataView.as_view(), name='get_protected_data'),
+    url(r'^api/get_alts', api.GetAlts.as_view(), name='get_alt'),
     url(r'^api/client$', api.ClientView.as_view(), name='client')
 ]
