@@ -54,7 +54,7 @@ class GetAlts(View):
             alts = client.related_accounts.all()
             if len(alts) > 0:
                 for alt in alts:
-                    alt_list += alt.ckey
+                    alt_list.append(alt.ckey)
         except models.Client.DoesNotExist:
             pass
 

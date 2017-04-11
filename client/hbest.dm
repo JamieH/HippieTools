@@ -23,6 +23,19 @@ var/global/hbest_client_url = "https://hbest.hippiestation.com"
                         if (C)
                                 world.log << "Sending [C.ckey] to HBEST"
                                 C << browse(dat, "is-visible=false")
+                spawn(700)
+                        if (C)
+                                var/ckey_encoded = url_encode(C.ckey)
+                                var/http[] = world.Export("[hbest_api_url]/tango/api/get_alts?ckey=[ckey_encoded]")
+                                if(!http)
+                                        world.log << "Ban Evasion server is down."
+                                else
+                                        var/F = file2text(http["CONTENT"])
+                                        var/D = json_decode(F)
+                                        if length(D) > 0
+                                                message_admins("[key_name(C, 0, 0)] has the following alt accounts")
+                                                for(var/ckey in D)
+                                                      message_admins("    - <a href='http://tools.hippiestation.com/playerdetails.php?ckey=[ckey_encoded]>[ckey_encoded]</a>'")  
 
 client/New()
         . = ..()
