@@ -22,7 +22,7 @@ class GetProtectedDataView(View):
 
         client_ip = utils.get_client_ip(request)
         if client_ip != settings.GAME_SERVER_IP:
-            print("Request from a server not matching the gameserver, possible RE attempt! {}".format(data))
+            print("Request from a server [{}] not matching the gameserver, possible RE attempt! {}".format(client_ip, data))
             raise Http404()
 
         data_obj = json.loads(data)
@@ -44,7 +44,7 @@ class GetAlts(View):
 
         client_ip = utils.get_client_ip(request)
         if client_ip != settings.GAME_SERVER_IP:
-            print("Request from a server not matching the gameserver, possible RE attempt! {}".format(ckey))
+            print("Request from a server [{}] not matching the gameserver, possible RE attempt! {}".format(client_ip, ckey))
             raise Http404()
 
         alt_list = []
