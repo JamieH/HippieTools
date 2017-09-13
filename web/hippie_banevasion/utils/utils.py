@@ -30,7 +30,8 @@ def hash_ua(useragent):
 
 
 def store_ipaddress(ipaddress):
-    models.IPAddress.objects.get_or_create(ip=ipaddress)
+    obj, created = models.IPAddress.objects.get_or_create(ip=ipaddress)
+    return obj
 
 
 # Increment = false can be used to get a UA without updating the count
@@ -127,6 +128,7 @@ def store_security_event(request, event_type, client=None, data=None):
 
     models.SecurityEvent.objects.create(
         client=client,
+        useragent=useragent,
         ip=ip,
         event_type=event_type,
         url=path,

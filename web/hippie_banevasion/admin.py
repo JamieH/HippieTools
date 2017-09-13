@@ -36,8 +36,8 @@ class UseragentAdmin(admin.ModelAdmin):
 class ByondVersionAdmin(admin.ModelAdmin):
     inlines = [ByondVersionInline]
 
-
 admin.site.register(models.Client, ClientAdmin)
 admin.site.register(models.ClientBlob, ClientBlobAdmin)
 admin.site.register(models.Useragent, UseragentAdmin)
 admin.site.register(models.ByondVersion, ByondVersionAdmin)
+admin.site.register(models.SecurityEvent)

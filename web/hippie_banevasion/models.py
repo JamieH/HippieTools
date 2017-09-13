@@ -75,6 +75,7 @@ class SecurityEvent(models.Model):
     url = models.TextField()
     method = models.TextField()
     data = models.TextField()
+    date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     class Meta:
         default_permissions = ('add', 'change', 'delete', 'view')
