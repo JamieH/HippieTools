@@ -4,3 +4,4 @@ pycryptodome
 gunicorn
 StringIO
 raven
+django-enumfield-ng

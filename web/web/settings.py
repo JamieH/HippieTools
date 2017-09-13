@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'hippie_admin.apps.HippieAdminConfig',
     'hippie_banevasion.apps.HippieBanEvasionConfig',
     'raven.contrib.django.raven_compat',
+    'django_enumfield'
 ]
 
 MIDDLEWARE = [

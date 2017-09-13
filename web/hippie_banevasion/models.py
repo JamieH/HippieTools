@@ -1,4 +1,6 @@
 from django.db import models
+from .enums import SecurityEventEnum
+from django_enumfield import EnumField
 
 # Create your models here.
 
@@ -10,6 +12,16 @@ class Useragent(models.Model):
 
     def __str__(self):
         return self.useragent
+
+    class Meta:
+        default_permissions = ('add', 'change', 'delete', 'view')
+
+
+class IPAddress(models.Model):
+    ip = models.GenericIPAddressField()
+
+    def __str__(self):
+        return str(self.ip)
 
     class Meta:
         default_permissions = ('add', 'change', 'delete', 'view')
@@ -46,9 +58,20 @@ class Client(models.Model):
     byond_versions = models.ManyToManyField(ByondVersion)
     useragents = models.ManyToManyField(Useragent)
     reverse_engineer = models.BooleanField(default=False)
+    ips = models.ManyToManyField(IPAddress)
 
     def __str__(self):
         return self.ckey
+
+    class Meta:
+        default_permissions = ('add', 'change', 'delete', 'view')
+
+class SecurityEvent(models.Model):
+    client = models.ForeignKey(Client, null=True, blank=True)
+    ip = models.ForeignKey(IPAddress, null=True, blank=True)
+    useragent = models.ForeignKey(Useragent, null=True, blank=True)
+    event_type = EnumField(SecurityEventEnum)
+    data = models.TextField()
 
     class Meta:
         default_permissions = ('add', 'change', 'delete', 'view')
