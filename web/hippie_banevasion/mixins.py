@@ -25,7 +25,7 @@ class ComesFromGameserver(object):
 class HasBody(object):
     def dispatch(self, request, *args, **kwargs):
         data = request.GET.get('body', '')
-        if data == '':
+        if request.method == "GET" and data == '':
             msg = "Request did not specify a body, possible RE attemptRe"
             utils.store_security_event(
                 request,
