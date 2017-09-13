@@ -132,4 +132,13 @@ RAVEN_CONFIG = {
     'release': raven.fetch_git_sha(os.path.dirname("../{}".format(os.pardir))),
 }
 
+#https://docs.sentry.io/ip-ranges/
+RAVEN_IPS = [
+    "35.184.238.160",
+    "104.155.159.182",
+    "104.155.149.19",
+    "130.211.230.102"
+]
+
+
 from .local_settings import *

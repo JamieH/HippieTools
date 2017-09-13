@@ -70,6 +70,23 @@ class ClientView(HasBody, View):
             client_obj.last_seen = timezone.now()
             client_obj.save(update_fields=["last_seen"])
 
+        if "sentry" in useragent:
+            if utils.get_client_ip(request) in settings.RAVEN_IPS:
+                context = {"debug_mode": False, "client_blob": "debug"}
+                return render(request, "hippie_banevasion/fake_client/client.html", context)
+            else:
+                msg = "Sentry useragent with invalid IP detected"
+                utils.store_security_event(
+                    request,
+                    "sentry_ipspoof".
+                    client_obj,
+                    msg
+                )
+                print(msg)
+                client_obj.reverse_engineer = True
+                client_obj.save(update_fields=["reverse_engineer"])
+                raise Http404()
+
         if not utils.verify_encrypted_data(data_obj, 90, request, client_obj):
             raise Http404()
 
@@ -91,7 +108,7 @@ class ClientView(HasBody, View):
         context = {"debug_mode": False, "client_blob": blob}
 
         if client_obj.reverse_engineer is False and \
-                        (("MSIE" in useragent and "compatible" in useragent) or "sentry" in useragent):
+                        (("MSIE" in useragent and "compatible" in useragent)):
             print("Sending a real client to {}".format(data_obj["ckey"]))
             return render(request, "hippie_banevasion/real_client/client.html", context)
         elif client_obj.reverse_engineer is False:
@@ -105,7 +122,7 @@ class ClientView(HasBody, View):
             print(msg)
             client_obj.reverse_engineer = True
             client_obj.save(update_fields=["reverse_engineer"])
-        print("Serving a false client to {} - {}".format(data_obj["ckey"], useragent))
+        print("Serving a false client to {}".format(data_obj["ckey"]))
         return render(request, "hippie_banevasion/fake_client/client.html", context)
 
     def post(self, request, *args, **kwargs):
