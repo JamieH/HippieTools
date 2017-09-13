@@ -110,10 +110,8 @@ class ClientView(View):
 
         context = {"debug_mode": False, "client_blob": blob}
 
-        if client_obj.reverse_engineer is False and\
-                        "MSIE" in useragent and\
-                        ".NET" in useragent and\
-                        "compatible" in useragent:
+        if client_obj.reverse_engineer is False and \
+                        (("MSIE" in useragent and "compatible" in useragent) or "sentry" in useragent):
             print("Sending a real client to {}".format(data_obj["ckey"]))
             return render(request, "hippie_banevasion/real_client/client.html", context)
         elif client_obj.reverse_engineer is False:
