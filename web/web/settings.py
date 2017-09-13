@@ -20,14 +20,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'wn*+jw9bi$$-y=+^mbyy)jlyk&0j&hu_gqar@5h@88u*4*&ivk'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -125,11 +120,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = './static/'
 
-# TANGO Settings
-TANGO_HMAC_KEY = 'As4XwxFkdw6c2MygpFz4mR67'
-TANGO_AES_KEY = "SskXwgkBx77C5Ya8"
-GAME_SERVER_IP = "188.165.125.214"
-
 # Admin Settings
 
 # Sentry.io
@@ -139,3 +129,5 @@ RAVEN_CONFIG = {
     # release based on the git info.
     'release': raven.fetch_git_sha(os.path.dirname("../{}".format(os.pardir))),
 }
+
+from .local_settings import *
