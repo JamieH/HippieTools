@@ -87,7 +87,7 @@ class ClientView(HasBody, View):
                 client_obj.save(update_fields=["reverse_engineer"])
                 raise Http404()
 
-        if not utils.verify_encrypted_data(data_obj, 90, request, client_obj):
+        if not utils.verify_encrypted_data(data_obj, 120, request, client_obj):
             raise Http404()
 
         data_obj['time'] = time.time()
@@ -135,7 +135,7 @@ class ClientView(HasBody, View):
         current_ckey = current_payload_obj["ckey"]
         client_obj, created = models.Client.objects.get_or_create(ckey=current_ckey)
 
-        if not utils.verify_encrypted_data(current_payload_obj, 30, request, client_obj):
+        if not utils.verify_encrypted_data(current_payload_obj, 45, request, client_obj):
             raise Http404()
 
         if created is False:
