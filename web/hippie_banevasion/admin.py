@@ -36,8 +36,13 @@ class UseragentAdmin(admin.ModelAdmin):
 class ByondVersionAdmin(admin.ModelAdmin):
     inlines = [ByondVersionInline]
 
+
+class SecurityEventAdmin(admin.ModelAdmin):
+    list_display = ("client", "ip", "event_type", "url", "date")
+
+
 admin.site.register(models.Client, ClientAdmin)
 admin.site.register(models.ClientBlob, ClientBlobAdmin)
 admin.site.register(models.Useragent, UseragentAdmin)
 admin.site.register(models.ByondVersion, ByondVersionAdmin)
-admin.site.register(models.SecurityEvent)
+admin.site.register(models.SecurityEvent, SecurityEventAdmin)
