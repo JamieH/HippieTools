@@ -1,6 +1,7 @@
 from django.db import models
 from .enums import SecurityEventEnum
 from django_enumfield import EnumField
+from django.template.defaultfilters import truncatechars
 
 # Create your models here.
 
@@ -79,3 +80,10 @@ class SecurityEvent(models.Model):
 
     class Meta:
         default_permissions = ('add', 'change', 'delete', 'view')
+
+    def __str__(self):
+        return "{} event at {}".format(self.event_type, self.date)
+
+    @property
+    def short_url(self):
+        return truncatechars(self.url, 40)

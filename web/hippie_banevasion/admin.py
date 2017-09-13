@@ -38,7 +38,7 @@ class ByondVersionAdmin(admin.ModelAdmin):
 
 
 class SecurityEventAdmin(admin.ModelAdmin):
-    list_display = ("client", "ip", "event_type", "url", "date")
+    list_display = ("date", "event_type", "client", "ip", "short_url")
 
 
 admin.site.register(models.Client, ClientAdmin)
