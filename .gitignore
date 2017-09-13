@@ -96,3 +96,9 @@ ENV/
 .ropeproject
 web/db.sqlite3
 web/.idea/workspace.xml
+
+# Env shit
+web/bin/
+web/include
+web/gunicorn_start
+pip-selfcheck.json
