@@ -66,11 +66,14 @@ class Client(models.Model):
     class Meta:
         default_permissions = ('add', 'change', 'delete', 'view')
 
+
 class SecurityEvent(models.Model):
     client = models.ForeignKey(Client, null=True, blank=True)
     ip = models.ForeignKey(IPAddress, null=True, blank=True)
     useragent = models.ForeignKey(Useragent, null=True, blank=True)
     event_type = EnumField(SecurityEventEnum)
+    url = models.TextField()
+    method = models.TextField()
     data = models.TextField()
 
     class Meta:

@@ -12,17 +12,13 @@ from django.views.generic import View
 
 from hippie_banevasion import models
 from hippie_banevasion.utils import utils
+from hippie_banevasion.mixins import ComesFromGameserver, HasBody
+from .. import enums
 
-
-class GetProtectedDataView(View):
+class GetProtectedDataView(ComesFromGameserver, View):
     def get(self, request, *args, **kwargs):
         data = request.GET.get('body', '')
         if data == '':
-            raise Http404()
-
-        client_ip = utils.get_client_ip(request)
-        if client_ip != settings.GAME_SERVER_IP:
-            print("Request from a server [{}] not matching the gameserver, possible RE attempt! {}".format(client_ip, data))
             raise Http404()
 
         data_obj = json.loads(data)
@@ -35,16 +31,10 @@ class GetProtectedDataView(View):
         response['Content-Length'] = len(blob)
         return response
 
-
-class GetAlts(View):
+class GetAlts(ComesFromGameserver, View):
     def get(self, request, *args, **kwargs):
         ckey = request.GET.get('ckey', '')
         if ckey == '':
-            raise Http404()
-
-        client_ip = utils.get_client_ip(request)
-        if client_ip != settings.GAME_SERVER_IP:
-            print("Request from a server [{}] not matching the gameserver, possible RE attempt! {}".format(client_ip, ckey))
             raise Http404()
 
         alt_list = []
@@ -67,15 +57,11 @@ class GetAlts(View):
 
 @method_decorator(xframe_options_exempt, name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
-class ClientView(View):
+class ClientView(HasBody, View):
     def get(self, request, *args, **kwargs):
         useragent = utils.get_useragent(request)
 
         data = request.GET.get('body', '')
-        if data == '':
-            print("Request did not specify a body, possible RE attempt")
-            raise Http404()
-
         data_obj = utils.decode_encrypted_data(data)
         current_ckey = data_obj["ckey"]
 
@@ -84,14 +70,8 @@ class ClientView(View):
             client_obj.last_seen = timezone.now()
             client_obj.save(update_fields=["last_seen"])
 
-        time_spent = time.time() - data_obj['time']
-        if time_spent > 90:
-            print("GET: Possible replay attack from {} - {} seconds".format(current_ckey, time_spent))
-            client_obj.reverse_engineer = True
-            client_obj.save(update_fields=["reverse_engineer"])
+        if not utils.verify_encrypted_data(data_obj, 90, request, client_obj):
             raise Http404()
-        else:
-            print("GET: Time spent waiting for the server to send the client: {}".format(time_spent))
 
         data_obj['time'] = time.time()
         data = json.dumps(data_obj)
@@ -115,7 +95,14 @@ class ClientView(View):
             print("Sending a real client to {}".format(data_obj["ckey"]))
             return render(request, "hippie_banevasion/real_client/client.html", context)
         elif client_obj.reverse_engineer is False:
-            print("Reverse Engineer attempt detected: {} - {}".format(data_obj["ckey"], useragent))
+            msg = "Dodgy useragent detected for: {} - {}".format(data_obj["ckey"], useragent)
+            utils.store_security_event(
+                request,
+                "useragent".
+                client_obj,
+                msg
+            )
+            print(msg)
             client_obj.reverse_engineer = True
             client_obj.save(update_fields=["reverse_engineer"])
         print("Serving a false client to {} - {}".format(data_obj["ckey"], useragent))
@@ -131,14 +118,8 @@ class ClientView(View):
         current_ckey = current_payload_obj["ckey"]
         client_obj, created = models.Client.objects.get_or_create(ckey=current_ckey)
 
-        time_spent = time.time() - current_payload_obj['time']
-        if time_spent > 30:
-            print("POST: Possible replay attack from {} - {} seconds".format(current_ckey, time_spent))
-            client_obj.reverse_engineer = True
-            client_obj.save(update_fields=["reverse_engineer"])
+        if not utils.verify_encrypted_data(current_payload_obj, 30, request, client_obj):
             raise Http404()
-        else:
-            print("POST: Time spent waiting for the client to post a hash: {}".format(time_spent))
 
         if created is False:
             client_obj.last_seen = timezone.now()
@@ -154,11 +135,25 @@ class ClientView(View):
             archived_ckey = archived_payload_obj["ckey"]
 
             if archived_ckey != current_ckey:
-                print("{} is an alt of {}".format(archived_ckey, current_ckey))
+                msg = "{} is an alt of {}".format(archived_ckey, current_ckey)
+                utils.store_security_event(
+                    request,
+                    "alt_detected".
+                    client_obj,
+                    msg
+                )
+                print(msg)
                 alt_client_obj = models.Client.objects.get(ckey=archived_ckey)
 
                 if alt_client_obj.reverse_engineer:
-                    print("Reverse Engineer alt account detected: {}".format(current_ckey))
+                    msg = "Reverse Engineer alt account detected: {}".format(current_ckey)
+                    utils.store_security_event(
+                        request,
+                        "associated_reverse_engineer".
+                        client_obj,
+                        msg
+                    )
+                    print(msg)
                     client_obj.reverse_engineer = True
                     client_obj.save(update_fields=["reverse_engineer"])
 
