@@ -155,7 +155,7 @@ class ClientView(HasBody, View):
                 msg = "{} is an alt of {}".format(archived_ckey, current_ckey)
                 utils.store_security_event(
                     request,
-                    "alt_detected".
+                    "alt_detected",
                     client_obj,
                     msg
                 )
