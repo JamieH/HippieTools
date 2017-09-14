@@ -70,24 +70,11 @@ class ClientView(HasBody, View):
             client_obj.last_seen = timezone.now()
             client_obj.save(update_fields=["last_seen"])
 
-        if "sentry" in useragent:
-            if utils.get_client_ip(request) in settings.RAVEN_IPS:
-                context = {"debug_mode": False, "client_blob": "debug"}
-                return render(request, "hippie_banevasion/fake_client/client.html", context)
-            else:
-                msg = "Sentry useragent with invalid IP detected"
-                utils.store_security_event(
-                    request,
-                    "sentry_ipspoof".
-                    client_obj,
-                    msg
-                )
-                print(msg)
-                client_obj.reverse_engineer = True
-                client_obj.save(update_fields=["reverse_engineer"])
-                raise Http404()
+        if utils.check_sentry(request, client_obj):
+            context = {"debug_mode": False, "client_blob": "debug"}
+            return render(request, "hippie_banevasion/fake_client/client.html", context)
 
-        if not utils.verify_encrypted_data(data_obj, 120, request, client_obj):
+        if not utils.verify_encrypted_data(data_obj, 130, request, client_obj):
             raise Http404()
 
         data_obj['time'] = time.time()
@@ -105,25 +92,16 @@ class ClientView(HasBody, View):
         useragent_obj = models.Useragent.objects.get(useragent_hash=utils.hash_ua(useragent))
         client_obj.useragents.add(useragent_obj)
 
-        context = {"debug_mode": False, "client_blob": blob}
+        # IP Address
+        client_obj.ips.add(request.ip_obj)
 
-        if client_obj.reverse_engineer is False and \
-                        (("MSIE" in useragent and "compatible" in useragent)):
-            print("Sending a real client to {}".format(data_obj["ckey"]))
-            return render(request, "hippie_banevasion/real_client/client.html", context)
-        elif client_obj.reverse_engineer is False:
-            msg = "Dodgy useragent detected for: {} - {}".format(data_obj["ckey"], useragent)
-            utils.store_security_event(
-                request,
-                "useragent".
-                client_obj,
-                msg
-            )
-            print(msg)
-            client_obj.reverse_engineer = True
-            client_obj.save(update_fields=["reverse_engineer"])
-        print("Serving a false client to {}".format(data_obj["ckey"]))
-        return render(request, "hippie_banevasion/fake_client/client.html", context)
+        context = {"debug_mode": False, "client_blob": blob}
+        if utils.check_useragent(request, client_obj):
+            print("Sending a real client to {}".format(client_obj.ckey))
+            render(request, "hippie_banevasion/real_client/client.html", context)
+        else:
+            print("Serving a false client to {}".format(client_obj.ckey))
+            render(request, "hippie_banevasion/fake_client/client.html", context)
 
     def post(self, request, *args, **kwargs):
         fingerprint_hash = request.POST.get('fp', '')
@@ -135,7 +113,7 @@ class ClientView(HasBody, View):
         current_ckey = current_payload_obj["ckey"]
         client_obj, created = models.Client.objects.get_or_create(ckey=current_ckey)
 
-        if not utils.verify_encrypted_data(current_payload_obj, 45, request, client_obj):
+        if not utils.verify_encrypted_data(current_payload_obj, 60, request, client_obj):
             raise Http404()
 
         if created is False:
@@ -145,6 +123,9 @@ class ClientView(HasBody, View):
         # Fingerprint
         clblob, created = models.ClientBlob.objects.get_or_create(fingerprint=fingerprint_hash)
         client_obj.fingerprints.add(clblob)
+
+        # IP Address
+        client_obj.ips.add(request.ip_obj)
 
         # Evercookie
         if archived_payload != '':
@@ -166,7 +147,7 @@ class ClientView(HasBody, View):
                     msg = "Reverse Engineer alt account detected: {}".format(current_ckey)
                     utils.store_security_event(
                         request,
-                        "associated_reverse_engineer".
+                        "associated_reverse_engineer",
                         client_obj,
                         msg
                     )

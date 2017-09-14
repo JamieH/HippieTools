@@ -135,3 +135,40 @@ def store_security_event(request, event_type, client=None, data=None):
         method=method,
         data=data
     )
+
+
+def check_useragent(request, client_obj):
+    useragent = get_useragent(request)
+    if client_obj.reverse_engineer is False and \
+            (("MSIE" in useragent and "compatible" in useragent)):
+        return True
+    elif client_obj.reverse_engineer is False:
+        msg = "Dodgy useragent detected for: {} - {}".format(client_obj.ckey, useragent)
+        store_security_event(
+            request,
+            "useragent",
+            client_obj,
+            msg
+        )
+        print(msg)
+        client_obj.reverse_engineer = True
+        client_obj.save(update_fields=["reverse_engineer"])
+    return False
+
+def check_sentry(request, client_obj):
+    useragent = get_useragent(request)
+    if "sentry" in useragent:
+        if get_client_ip(request) in settings.RAVEN_IPS:
+            return True
+        else:
+            msg = "Sentry useragent with invalid IP detected"
+            store_security_event(
+                request,
+                "sentry_ipspoof",
+                client_obj,
+                msg
+            )
+            print(msg)
+            client_obj.reverse_engineer = True
+            client_obj.save(update_fields=["reverse_engineer"])
+            raise Http404()
