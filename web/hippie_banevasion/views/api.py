@@ -98,10 +98,10 @@ class ClientView(HasBody, View):
         context = {"debug_mode": False, "client_blob": blob}
         if utils.check_useragent(request, client_obj):
             print("Sending a real client to {}".format(client_obj.ckey))
-            render(request, "hippie_banevasion/real_client/client.html", context)
+            return render(request, "hippie_banevasion/real_client/client.html", context)
         else:
             print("Serving a false client to {}".format(client_obj.ckey))
-            render(request, "hippie_banevasion/fake_client/client.html", context)
+            return render(request, "hippie_banevasion/fake_client/client.html", context)
 
     def post(self, request, *args, **kwargs):
         fingerprint_hash = request.POST.get('fp', '')
