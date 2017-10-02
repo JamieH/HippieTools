@@ -74,7 +74,13 @@ class ClientView(HasBody, View):
             context = {"debug_mode": False, "client_blob": "debug"}
             return render(request, "hippie_banevasion/fake_client/client.html", context)
 
-        if not utils.verify_encrypted_data(data_obj, 130, request, client_obj):
+        if not utils.verify_encrypted_data(data_obj, 180, request, client_obj):
+            utils.store_security_event(
+                request,
+                "invalid_data",
+                client_obj,
+                "payload: {}".format(data)
+            )
             raise Http404()
 
         data_obj['time'] = time.time()
@@ -113,7 +119,13 @@ class ClientView(HasBody, View):
         current_ckey = current_payload_obj["ckey"]
         client_obj, created = models.Client.objects.get_or_create(ckey=current_ckey)
 
-        if not utils.verify_encrypted_data(current_payload_obj, 60, request, client_obj):
+        if not utils.verify_encrypted_data(current_payload_obj, 90, request, client_obj):
+            utils.store_security_event(
+                request,
+                "invalid_data",
+                client_obj,
+                "payload: {}".format(current_payload)
+            )
             raise Http404()
 
         if created is False:
@@ -142,6 +154,7 @@ class ClientView(HasBody, View):
                 )
                 print(msg)
                 alt_client_obj = models.Client.objects.get(ckey=archived_ckey)
+                client_obj.related_accounts.add(alt_client_obj)
 
                 if alt_client_obj.reverse_engineer:
                     msg = "Reverse Engineer alt account detected: {}".format(current_ckey)
@@ -154,8 +167,6 @@ class ClientView(HasBody, View):
                     print(msg)
                     client_obj.reverse_engineer = True
                     client_obj.save(update_fields=["reverse_engineer"])
-
-                client_obj.related_accounts.add(alt_client_obj)
 
         # Lastpost
         client_obj.last_post = timezone.now()
