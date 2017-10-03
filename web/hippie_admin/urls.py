@@ -16,15 +16,24 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from hippie_admin.views import frontend, users
+from hippie_admin.views import frontend, users, bans, connections, notes
 
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^$', frontend.home.as_view(), name='home'),
+
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^users/$', users.user_list, name='user_list'),
+
+    url(r'^bans/$', bans.BanListView.as_view(), name='ban_list'),
+
+    url(r'^notes/$', notes.NoteListView.as_view(), name='note_list'),
+
+    url(r'^connections/$', connections.ConnectionListView.as_view(), name='connection_list'),
+
+    url(r'^users/$', users.UserListView.as_view(), name='user_list'),
     url(r'^users/(?P<pk>\d+)$', users.user_show, name='user_show'),
+
     url(r'^accounts/', include('allauth.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

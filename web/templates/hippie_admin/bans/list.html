@@ -1,7 +1,7 @@
 {% extends "hippie_admin/base.html" %}
 
 {% block content %}
-    <h1>Clients</h1>
+    <h1>Bans</h1>
 
     <form id="searchform" action="{% url 'user_list' %}" method="get" accept-charset="utf-8">
         <button class="searchbutton" type="submit">
@@ -11,10 +11,10 @@
     </form>
 
     <ul>
-        {% for client in object_list %}
-            <li>{{ client }} - <a href="{% url 'user_show' client.id %}"> show</a></li>
+        {% for ban in object_list %}
+            <li>{{ ban }} - <a href="{% url 'user_show' ban.id %}"> show</a></li>
         {% empty %}
-            <li>No clients yet.</li>
+            <li>No bans yet.</li>
         {% endfor %}
     </ul>
     {% if is_paginated %}

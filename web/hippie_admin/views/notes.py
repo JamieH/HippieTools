@@ -1,27 +1,20 @@
 import operator
 import functools
 
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.views.generic.list import ListView
 
 from hippie_banevasion.models import Client
 
 
-@login_required
-def user_show(request, pk, template_name='hippie_admin/users/show.html'):
-    client = get_object_or_404(Client, pk=pk)
-    return render(request, template_name, {'client':client})
-
-class UserListView(LoginRequiredMixin, ListView):
+class NoteListView(LoginRequiredMixin, ListView):
     """
     Display a Blog List page filtered by the search query.
     """
     model = Client
     paginate_by = 30
-    template_name = "hippie_admin/users/list.html"
+    template_name = "hippie_admin/notes/list.html"
 
     def get_queryset(self):
         result = super(ListView, self).get_queryset()
