@@ -10,6 +10,6 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        context['memos'] = Memo.objects.all()
-        context['mentor_memos'] = MentorMemo.objects.all()
+        context['memos'] = Memo.objects.all().order_by('-timestamp')
+        context['mentor_memos'] = MentorMemo.objects.all().order_by('-timestamp')
         return context

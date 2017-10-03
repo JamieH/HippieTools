@@ -1,5 +1,31 @@
 {% extends "hippie_admin/base.html" %}
 
 {% block content %}
-    Welcome to the Hippie Admin interface.
+    <h1>Welcome to the Hippie Admin interface.</h1>
+
+    <div class="row">
+        <div class="col">
+            <h3>Memos</h3>
+            <ul class="list-group">
+                {% for memo in memos %}
+                    <li class="list-group-item">
+                        <blockquote>{{ memo.memotext }}</blockquote>
+                        <footer>~ {{ memo.ckey }} -- {{ memo.timestamp }}</footer>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col">
+            <h3>Mentor Memos</h3>
+            <ul class="list-group">
+                {% for memo in mentor_memos %}
+                    <li class="list-group-item">
+                        <blockquote>{{ memo.memotext }}</blockquote>
+                        <footer>~ {{ memo.ckey }} -- {{ memo.timestamp }}</footer>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 {% endblock %}
+
