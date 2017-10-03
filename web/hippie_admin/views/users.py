@@ -31,9 +31,9 @@ class UserListView(LoginRequiredMixin, ListView):
             query_list = query.split()
             result = result.filter(
                 functools.reduce(operator.and_,
-                       (Q(title__icontains=q) for q in query_list)) |
+                       (Q(ckey__icontains=q) for q in query_list)) |
                 functools.reduce(operator.and_,
-                       (Q(content__icontains=q) for q in query_list))
+                       (Q(ips__icontains=q) for q in query_list))
             )
 
         return result
