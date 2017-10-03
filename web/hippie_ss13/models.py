@@ -67,6 +67,9 @@ class Ban(models.Model):
     unbanned_computerid = models.CharField(max_length=32, blank=True, null=True)
     unbanned_ip = models.IntegerField(blank=True, null=True)
 
+    def __str__(self):
+        return "Ban on {} {} by {} on {} for {}".format(self.ckey, self.bantype, self.a_ckey, self.bantime, self.duration)
+
     class Meta:
         managed = False
         db_table = 'ban'
@@ -80,6 +83,9 @@ class ConnectionLog(models.Model):
     ckey = models.CharField(max_length=45, blank=True, null=True)
     ip = models.IntegerField()
     computerid = models.CharField(max_length=45, blank=True, null=True)
+
+    def __str__(self):
+        return "Connection from {} on {}".format(self.ckey, self.datetime)
 
     class Meta:
         managed = False
@@ -229,6 +235,9 @@ class Notes(models.Model):
     edits = models.TextField(blank=True, null=True)
     server = models.CharField(max_length=50)
     secret = models.IntegerField()
+
+    def __str__(self):
+        return "Note on {} from {} on {}".format(self.ckey, self.adminckey, self.datetime)
 
     class Meta:
         managed = False
