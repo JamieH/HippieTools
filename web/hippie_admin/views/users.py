@@ -33,7 +33,7 @@ class UserListView(LoginRequiredMixin, ListView):
                 functools.reduce(operator.and_,
                        (Q(ckey__icontains=q) for q in query_list)) |
                 functools.reduce(operator.and_,
-                       (Q(ips__icontains=q) for q in query_list))
+                       (Q(ips__ip__icontains=q) for q in query_list))
             )
 
         return result
