@@ -65,7 +65,7 @@ class Client(models.Model):
         return self.ckey
 
     class Meta:
-        ordering = ["last_seen"]
+        ordering = ["-last_seen"]
         default_permissions = ('add', 'change', 'delete', 'view')
 
     def get_fields(self):
