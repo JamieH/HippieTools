@@ -11,6 +11,6 @@ def user_list(request, template_name='hippie_admin/users/list.html'):
     return render(request, template_name, data)
 
 @login_required
-def user_show(request, pk, template_name='hippie_admin/users/user.html'):
+def user_show(request, pk, template_name='hippie_admin/users/show.html'):
     client = get_object_or_404(Client, pk=pk)
     return render(request, template_name, {'client':client})
