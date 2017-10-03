@@ -237,7 +237,7 @@ class Notes(models.Model):
     secret = models.IntegerField()
 
     def __str__(self):
-        return "Note on {} from {} on {}".format(self.ckey, self.adminckey, self.datetime)
+        return "Note on {} from {} on {}".format(self.ckey, self.adminckey, self.timestamp)
 
     class Meta:
         managed = False
