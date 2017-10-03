@@ -3,5 +3,13 @@
 
 {% block content %}
     <h1>{{ client.ckey }}</h1>
-    <pre>{% debug_object_dump client %}</pre>
+    <pre>
+
+    {% for name, value in client.get_fields %}
+  {% if value %}
+    {{ name }} => {{ value }}
+  {% endif %}
+{% endfor %}
+
+    </pre>
 {% endblock %}

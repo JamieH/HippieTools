@@ -67,6 +67,8 @@ class Client(models.Model):
     class Meta:
         default_permissions = ('add', 'change', 'delete', 'view')
 
+    def get_fields(self):
+        return [(field.name, field.value_to_string(self)) for field in Client._meta.fields]
 
 class SecurityEvent(models.Model):
     client = models.ForeignKey(Client, null=True, blank=True)
