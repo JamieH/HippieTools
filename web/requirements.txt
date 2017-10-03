@@ -4,3 +4,5 @@ pycryptodome
 gunicorn
 raven
 django-enumfield-ng
+django-allauth
+django-mailgun

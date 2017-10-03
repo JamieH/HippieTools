@@ -1,0 +1,12 @@
+{% extends "hippie_admin/base.html" %}
+
+{% block content %}
+    <h1>Clients</h1>
+    <ul>
+    {% for client in object_list %}
+    <li>{{ client }} Client)
+    <a href="{% url 'hippie_admin:client_show' client.id %}">edit</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

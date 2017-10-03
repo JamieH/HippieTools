@@ -32,11 +32,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'xenforo_auth',
     'hippie_admin.apps.HippieAdminConfig',
     'hippie_banevasion.apps.HippieBanEvasionConfig',
     'raven.contrib.django.raven_compat',
     'django_enumfield'
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -131,5 +138,10 @@ RAVEN_IPS = [
     "130.211.230.102"
 ]
 
+LOGIN_REDIRECT_URL = '/'
+
+EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
+MAILGUN_ACCESS_KEY = 'key-448e28251bd487817e485e1478cd5e86'
+MAILGUN_SERVER_NAME = 'hippiestation.com'
 
 from .local_settings import *
