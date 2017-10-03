@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'hippie_admin.apps.HippieAdminConfig',
     'hippie_banevasion.apps.HippieBanEvasionConfig',
     'raven.contrib.django.raven_compat',
-    'django_enumfield'
+    'django_enumfield',
+    'hippie_ss13'
 ]
 
 SITE_ID = 1
@@ -85,8 +86,17 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'ss13': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'hippie_game',
+        'USER': 'hippie_game',
+        'PASSWORD': 'hippie_game',
+        'HOST': '51.15.135.75',
+        'PORT': '3306',
     }
 }
+DATABASE_ROUTERS = ['web.db_router.SS13Router', 'web.db_router.PrimaryRouter']
 
 
 # Password validation

@@ -3,6 +3,7 @@ from .enums import SecurityEventEnum
 from django_enumfield import EnumField
 from django.template.defaultfilters import truncatechars
 
+from hippie_ss13.models import Player
 # Create your models here.
 
 
@@ -70,6 +71,9 @@ class Client(models.Model):
 
     def get_fields(self):
         return [(field.name, field.value_to_string(self)) for field in Client._meta.fields]
+
+    def get_player(self):
+        return Player.objects.get(ckey=self.ckey)
 
 class SecurityEvent(models.Model):
     client = models.ForeignKey(Client, null=True, blank=True)

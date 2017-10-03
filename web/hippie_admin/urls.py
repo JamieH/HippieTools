@@ -22,7 +22,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    url(r'^$', frontend.home.as_view(), name='home'),
+    url(r'^$', frontend.HomeView.as_view(), name='home'),
 
     url(r'^accounts/', include('allauth.urls')),
 
