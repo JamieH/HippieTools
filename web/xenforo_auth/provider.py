@@ -21,7 +21,6 @@ class XenforoProvider(OAuth2Provider):
         return ["read",]
 
     def extract_uid(self, data):
-        print(data)
         return str(data['user']['user_id'])
 
     def extract_common_fields(self, data):

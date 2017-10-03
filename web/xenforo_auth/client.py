@@ -10,10 +10,8 @@ from allauth.socialaccount.providers.oauth2.client import (
 class XenforoOAuth2Client(OAuth2Client):
     def get_redirect_url(self, authorization_url, extra_params):
         url = super(XenforoOAuth2Client, self).get_redirect_url(authorization_url, extra_params)
-        print(url)
         url = url.replace("index.php?", "index.php?oauth/authorize&")
         url = re.sub(r'&scope=.\+.\+.\+.', '&scope=read', url)
-        print(url)
         return url
 
     def get_access_token(self, code):
