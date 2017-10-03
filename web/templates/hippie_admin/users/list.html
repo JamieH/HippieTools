@@ -4,8 +4,8 @@
     <h1>Clients</h1>
     <ul>
     {% for client in object_list %}
-    <li>{{ client }} Client)
-    <a href="{% url 'user_show' client.id %}">edit</a>
+    <li>{{ client }}
+    <a href="{% url 'user_show' client.id %}"> show</a>
     </li>
     {% endfor %}
 </ul>
