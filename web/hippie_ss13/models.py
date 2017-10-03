@@ -256,6 +256,9 @@ class Player(models.Model):
     accountjoindate = models.DateField(blank=True, null=True)
     flags = models.IntegerField()
 
+    def get_fields(self):
+        return [(field.name, field.value_to_string(self)) for field in Player._meta.fields]
+
     class Meta:
         managed = False
         db_table = 'player'

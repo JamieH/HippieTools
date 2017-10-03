@@ -3,13 +3,22 @@
 
 {% block content %}
     <h1>{{ client.ckey }}</h1>
+
+    Ban Evasion Stats:
     <pre>
-
     {% for name, value in client.get_fields %}
-  {% if value %}
-    {{ name }} => {{ value }}
-  {% endif %}
-{% endfor %}
+        {% if value %}
+            {{ name }} => {{ value }}
+        {% endif %}
+    {% endfor %}
+    </pre>
 
+    SS13 Stats:
+    <pre>
+    {% for name, value in client.get_player.get_fields %}
+        {% if value %}
+            {{ name }} => {{ value }}
+        {% endif %}
+    {% endfor %}
     </pre>
 {% endblock %}
