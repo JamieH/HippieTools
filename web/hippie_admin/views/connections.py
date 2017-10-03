@@ -5,14 +5,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.views.generic.list import ListView
 
-from hippie_banevasion.models import Client
+from hippie_ss13.models import ConnectionLog
 
 
 class ConnectionListView(LoginRequiredMixin, ListView):
     """
     Display a Blog List page filtered by the search query.
     """
-    model = Client
+    model = ConnectionLog
     paginate_by = 30
     template_name = "hippie_admin/connections/list.html"
 
