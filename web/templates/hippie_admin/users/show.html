@@ -1,0 +1,7 @@
+{% load ha_debug %}
+{% extends "hippie_admin/base.html" %}
+
+{% block content %}
+    <h1>{{ client.ckey }}</h1>
+    <pre>{% debug_object_dump client %}</pre>
+{% endblock %}
