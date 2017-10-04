@@ -17,6 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from hippie_banevasion.views import api
 
+app_name="hippie_hbest"
 urlpatterns = [
     url(r'^api/get_protected_data$', api.GetProtectedDataView.as_view(), name='get_protected_data'),
     url(r'^api/get_alts', api.GetAlts.as_view(), name='get_alt'),

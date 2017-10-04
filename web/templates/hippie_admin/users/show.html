@@ -99,7 +99,7 @@
                 </h2>
             </div>
             {% for alt in alts %}
-                <li>{{ alt.ckey }} - <a href="{% url 'user_show' alt.get_ckey %}"> show</a></li>
+                <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.get_ckey %}"> show</a></li>
             {% empty %}
                 No alt accounts that we could detect automatically (BETA).
             {% endfor %}

@@ -40,19 +40,19 @@
 
             {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'admin_list' %}">Admins</a>
+                    <a class="nav-link" href="{% url 'hippie_admin:admin_list' %}">Admins</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'ban_list' %}">Bans</a>
+                    <a class="nav-link" href="{% url 'hippie_admin:ban_list' %}">Bans</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'note_list' %}">Notes</a>
+                    <a class="nav-link" href="{% url 'hippie_admin:note_list' %}">Notes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'connection_list' %}">Connections</a>
+                    <a class="nav-link" href="{% url 'hippie_admin:connection_list' %}">Connections</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'user_list' %}">Users</a>
+                    <a class="nav-link" href="{% url 'hippie_admin:user_list' %}">Users</a>
                 </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
@@ -62,7 +62,7 @@
                         {% pretty_player current_player %} <i class="fa fa-caret-down"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a class="dropdown-item" href="{% url 'account_logout' %}"><i class="fa fa-sign-out"></i> Logout</a>
+                        <a class="dropdown-item" href="{% url 'hippie_admin:account_logout' %}"><i class="fa fa-sign-out"></i> Logout</a>
                     </div>
                 </li>
             {% endif %}

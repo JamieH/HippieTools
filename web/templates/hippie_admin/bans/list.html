@@ -3,7 +3,7 @@
 {% block content %}
     <h1>Bans</h1>
 
-    <form id="searchform" action="{% url 'user_list' %}" method="get" accept-charset="utf-8">
+    <form id="searchform" action="{% url 'hippie_admin:user_list' %}" method="get" accept-charset="utf-8">
         <button class="searchbutton" type="submit">
             <i class="fa fa-search"></i>
         </button>
@@ -12,7 +12,7 @@
 
     <ul>
         {% for ban in object_list %}
-            <li>{{ ban }} - <a href="{% url 'user_show' ban.id %}"> show</a></li>
+            <li>{{ ban }} - <a href="{% url 'hippie_admin:user_show' ban.id %}"> show</a></li>
         {% empty %}
             <li>No bans yet.</li>
         {% endfor %}

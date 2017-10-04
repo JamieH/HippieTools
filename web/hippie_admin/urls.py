@@ -20,6 +20,7 @@ from hippie_admin.views import frontend, users, bans, connections, notes, admins
 from django.conf import settings
 from django.conf.urls.static import static
 
+app_name="hippie_admin"
 urlpatterns = [
     url(r'^$', frontend.HomeView.as_view(), name='home'),
 
