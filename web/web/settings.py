@@ -33,15 +33,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'django.contrib.humanize',
+    'raven.contrib.django.raven_compat',
+    'debug_toolbar',
+    'django_enumfield',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'xenforo_auth',
     'hippie_admin.apps.HippieAdminConfig',
     'hippie_banevasion.apps.HippieBanEvasionConfig',
-    'raven.contrib.django.raven_compat',
-    'django_enumfield',
-    'hippie_ss13'
+    'hippie_ss13',
 ]
 
 SITE_ID = 1
@@ -54,7 +56,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'hippie_banevasion.middleware.store_ip.store_ip'
+    'hippie_banevasion.middleware.store_ip.store_ip',
+    'hippie_admin.middleware.check_rank.check_rank',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'web.urls'
@@ -71,6 +75,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'hippie_admin.middleware.user_player.user_player'
             ],
         },
     },
@@ -98,6 +103,26 @@ DATABASES = {
 }
 DATABASE_ROUTERS = ['web.db_router.SS13Router', 'web.db_router.PrimaryRouter']
 
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': [
+            '127.0.0.1:6379',
+        ],
+        'OPTIONS': {
+            'DB': 5,
+            'PASSWORD': '',
+            'PARSER_CLASS': 'redis.connection.HiredisParser',
+            'CONNECTION_POOL_CLASS': 'redis.BlockingConnectionPool',
+            'CONNECTION_POOL_CLASS_KWARGS': {
+                'max_connections': 50,
+                'timeout': 20,
+            },
+            'MAX_CONNECTIONS': 1000,
+            'PICKLE_VERSION': -1,
+        },
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -153,5 +178,7 @@ LOGIN_REDIRECT_URL = '/'
 EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
 MAILGUN_ACCESS_KEY = 'key-448e28251bd487817e485e1478cd5e86'
 MAILGUN_SERVER_NAME = 'hippiestation.com'
+
+INTERNAL_IPS = ['127.0.0.1']
 
 from .local_settings import *

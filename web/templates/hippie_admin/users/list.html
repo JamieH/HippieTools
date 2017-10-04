@@ -12,7 +12,7 @@
 
     <ul>
         {% for client in object_list %}
-            <li>{{ client }} - <a href="{% url 'user_show' client.id %}"> show</a></li>
+            <li>{{ client.ckey }} - <a href="{% url 'user_show' client.ckey %}"> show</a></li>
         {% empty %}
             <li>No clients yet.</li>
         {% endfor %}

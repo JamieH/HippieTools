@@ -14,9 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
-from django.contrib import admin
 
-from hippie_admin.views import frontend, users, bans, connections, notes
+from hippie_admin.views import frontend, users, bans, connections, notes, admins
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -26,6 +25,8 @@ urlpatterns = [
 
     url(r'^accounts/', include('allauth.urls')),
 
+    url(r'^admins/$', admins.AdminListView.as_view(), name='admin_list'),
+
     url(r'^bans/$', bans.BanListView.as_view(), name='ban_list'),
 
     url(r'^notes/$', notes.NoteListView.as_view(), name='note_list'),
@@ -33,7 +34,7 @@ urlpatterns = [
     url(r'^connections/$', connections.ConnectionListView.as_view(), name='connection_list'),
 
     url(r'^users/$', users.UserListView.as_view(), name='user_list'),
-    url(r'^users/(?P<pk>\d+)$', users.user_show, name='user_show'),
+    url(r'^users/(?P<ckey>[a-z0-9]+)$', users.user_show, name='user_show'),
 
     url(r'^accounts/', include('allauth.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

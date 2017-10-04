@@ -8,7 +8,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
-
+from hippie_admin.utils.cache import cache_ckey_callable
 
 class Admin(models.Model):
     ckey = models.CharField(max_length=32)
@@ -21,6 +21,8 @@ class Admin(models.Model):
         managed = False
         db_table = 'admin'
 
+    def get_player(self):
+        return Player.objects.get(ckey=self.ckey)
 
 class AdminLog(models.Model):
     datetime = models.DateTimeField()
@@ -259,10 +261,94 @@ class Player(models.Model):
     def get_fields(self):
         return [(field.name, field.value_to_string(self)) for field in Player._meta.fields]
 
+    @cache_ckey_callable
+    def get_bans(self):
+        print(Ban.objects.filter(ckey=self.ckey))
+        return Ban.objects.filter(ckey=self.ckey)
+
+    @cache_ckey_callable
+    def get_connections(self):
+        return ConnectionLog.filter(ckey=self.ckey)
+
+    @cache_ckey_callable
+    def get_notes(self):
+        return Notes.filter(ckey=self.ckey)
+
+    @cache_ckey_callable
+    def get_messages(self):
+        return Messages.filter(ckey=self.ckey)
+
+    @cache_ckey_callable
+    def get_rank(self):
+        try:
+            return Admin.objects.get(ckey=self.ckey).rank
+        except Admin.DoesNotExist:
+            return "User"
+
+    @cache_ckey_callable
+    def get_rank_bg_colour(self):
+        rank = self.get_rank()
+        colours = {
+            'Host': '#FF008F',
+            'HeadAdmin': '#5090E0',
+            'GameMaster': '#9E5EE2',
+            'GameAdmin': '#DFA02F',
+            'TrialAdmin': '#C93D3D',
+            'Mentor': '#EEE',
+            'Coder': '#009900'
+        }
+        if self.get_rank() not in colours:
+            return "#EEE"
+        return colours[rank]
+
+    @cache_ckey_callable
+    def get_rank_fg_colour(self):
+        rank = self.get_rank()
+        colours = {
+            'Host': '#FFF',
+            'HeadAdmin': '#FFF',
+            'GameMaster': '#FFF',
+            'GameAdmin': '#FFF',
+            'TrialAdmin': '#FFF',
+            'Mentor': '#444',
+            'Coder': '#FFF'
+        }
+        if self.get_rank() not in colours:
+            return "#444"
+        return colours[rank]
+
+    @cache_ckey_callable
+    def get_rank_icon(self):
+        rank = self.get_rank()
+        icons = {
+            'Host': 'fa-server',
+            'HeadAdmin': 'fa-star',
+            'GameMaster': 'fa-star-o',
+            'GameAdmin': 'fa-dot-circle-o',
+            'TrialAdmin': 'fa-gavel',
+            'Mentor': 'fa-github',
+            'Coder': 'fa-code'
+        }
+        if rank not in icons:
+            return ""
+        return icons[rank]
+
+    @cache_ckey_callable
+    def get_deaths(self):
+        return Death.objects.filter(byondkey=self.ckey)
+
+    @cache_ckey_callable
+    def get_role_time(self):
+        return RoleTime.objects.filter(ckey=self.ckey)
+
+    @cache_ckey_callable
+    def get_watch(self):
+        return Watch.objects.filter(ckey=self.ckey)
+
     class Meta:
         managed = False
         db_table = 'player'
-
+        ordering = ["-lastseen"]
 
 class PollOption(models.Model):
     pollid = models.IntegerField()

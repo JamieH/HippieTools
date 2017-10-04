@@ -1,3 +1,4 @@
+{% load pretty_key %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,16 +39,19 @@
             </li>
 
             {% if user.is_authenticated %}
-                <li class="nav-item active">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_list' %}">Admins</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'ban_list' %}">Bans</a>
                 </li>
-                <li class="nav-item active">
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'note_list' %}">Notes</a>
                 </li>
-                <li class="nav-item active">
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'connection_list' %}">Connections</a>
                 </li>
-                <li class="nav-item active">
+                <li class="nav-item">
                     <a class="nav-link" href="{% url 'user_list' %}">Users</a>
                 </li>
                 </ul>
@@ -55,7 +59,7 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
                        aria-expanded="false">
-                        {{ user.username }} <i class="fa fa-caret-down"></i>
+                        {% pretty_player current_player %} <i class="fa fa-caret-down"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
                         <a class="dropdown-item" href="{% url 'account_logout' %}"><i class="fa fa-sign-out"></i> Logout</a>
@@ -67,6 +71,10 @@
 </nav>
 
 <div class="container">
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+
     {% block content %} {% endblock %}
 
     <hr>

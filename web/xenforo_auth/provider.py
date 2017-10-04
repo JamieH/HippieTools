@@ -28,10 +28,6 @@ class XenforoProvider(OAuth2Provider):
         fields = user.get('user_fields')
         ckey = fields.get('ckey')
         ckey_value = ckey.get('value')
-        title = user.get("user_title")
-
-        if title not in ["Game Master", "Head Admin", "Host"]:
-            raise PermissionError("You should not be here!")
 
         return dict(email=user.get('user_email'),
                     username=ckey_value,

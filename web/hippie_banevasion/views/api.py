@@ -41,10 +41,7 @@ class GetAlts(ComesFromGameserver, View):
 
         try:
             client = models.Client.objects.get(ckey=ckey)
-            alts = client.related_accounts.all()
-            if len(alts) > 0:
-                for alt in alts:
-                    alt_list.append(alt.ckey)
+            alt_list = client.get_alts()
         except models.Client.DoesNotExist:
             pass
 

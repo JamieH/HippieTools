@@ -1,0 +1,40 @@
+{% extends "hippie_admin/base.html" %}
+{% load pretty_key %}
+
+{% block content %}
+    <h1>Admins</h1>
+
+
+    <table class="table sticky  table-condensed table-bordered sort">
+        <thead>
+        <tr>
+            <th>ckey</th>
+            <th>Rank</th>
+            <th>Connections</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for admin, player in admins.items %}
+
+            <tr>
+                <td>
+                    <a href="{% url 'user_show' player.ckey %}">
+                        {% pretty_player player %}
+                    </a>
+                </td>
+                <td>{{ admin.rank }}</td>
+                <td>555</td>
+            </tr>
+
+        {% empty %}
+            <tr>No admins yet.</tr>
+        {% endfor %}
+
+
+        </tbody>
+    </table>
+
+
+
+{% endblock %}

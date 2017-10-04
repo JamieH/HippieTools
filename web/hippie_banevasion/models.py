@@ -1,9 +1,12 @@
+import re
 from django.db import models
 from .enums import SecurityEventEnum
 from django_enumfield import EnumField
 from django.template.defaultfilters import truncatechars
 
 from hippie_ss13.models import Player
+
+CKEY_TO_KEY_RE = re.compile(r"[^a-zA-Z0-9@%]")
 # Create your models here.
 
 
@@ -72,8 +75,31 @@ class Client(models.Model):
     def get_fields(self):
         return [(field.name, field.value_to_string(self)) for field in Client._meta.fields]
 
+    def get_ckey(self):
+        ck = self.ckey.lower()
+        ck = CKEY_TO_KEY_RE.sub('', ck)
+        return ck
+
     def get_player(self):
-        return Player.objects.get(ckey=self.ckey)
+        return Player.objects.get(ckey=self.get_ckey())
+
+    def get_alts(self):
+        def recurse_alts(original_acc, alts, found_alts):
+            for alt in found_alts:
+                if alt in alts or alt.ckey == original_key:
+                    continue
+                    alts.append(alt)
+                    alts = find_new_alts(original_acc, alts, alt.related_accounts.all())
+            return alts
+
+        alts = []
+        our_alts = self.related_accounts.all()
+        for alt in our_alts:
+            alts.append(alt)
+            found_alts = recurse_alts(self.ckey, alts, [alt,])
+            alts = alts + list(set(found_alts) - set(alts))
+        return alts
+
 
 class SecurityEvent(models.Model):
     client = models.ForeignKey(Client, null=True, blank=True)

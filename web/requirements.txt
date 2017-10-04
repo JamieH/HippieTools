@@ -6,3 +6,6 @@ raven
 django-enumfield-ng
 django-allauth
 django-mailgun
+django-debug-toolbar
+django-redis-cache
+hiredis
