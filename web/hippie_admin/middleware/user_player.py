@@ -1,2 +1,4 @@
 def user_player(request):
-    return {'current_player': request.current_player}
+    if request.current_player is not None:
+        return {'current_player': request.current_player}
+    return {}
