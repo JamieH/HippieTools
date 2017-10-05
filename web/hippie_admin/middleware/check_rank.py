@@ -16,6 +16,9 @@ def check_rank(get_response):
         if path not in ["/accounts/login", "/accounts/xenforo/login", "/accounts/xenforo/login/callback"]:
             if not request.user.is_authenticated():
                 return HttpResponseRedirect("/accounts/login")
+        else:
+            response = get_response(request)
+            return response
 
         ckey = request.user.username
         ckey = CKEY_TO_KEY_RE.sub('', ckey)

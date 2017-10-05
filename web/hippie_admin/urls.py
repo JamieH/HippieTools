@@ -24,8 +24,6 @@ app_name="hippie_admin"
 urlpatterns = [
     url(r'^$', frontend.HomeView.as_view(), name='home'),
 
-    url(r'^accounts/', include('allauth.urls')),
-
     url(r'^admins/$', admins.AdminListView.as_view(), name='admin_list'),
 
     url(r'^bans/$', bans.BanListView.as_view(), name='ban_list'),

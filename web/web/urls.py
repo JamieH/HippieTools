@@ -20,6 +20,7 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     url(r'^', include('hippie_admin.urls')),
+    url(r'^accounts/', include('allauth.urls')),
     url(r'^backend/', admin.site.urls),
     url(r'^tango/', include('hippie_banevasion.urls'))
 ]
