@@ -449,9 +449,7 @@ class Player(models.Model):
         cache_key = "connection_log_dict"
         cache_value = cache.get(cache_key)
         if cache_value is not None:
-            print("hitting cache")
             return True
-        print("not hitting cache :sob:")
         connections = ConnectionLog.objects.all()
         ip_to_ckey = {}
         cid_to_ckey = {}
