@@ -473,7 +473,8 @@ class Player(models.Model):
             cache.set("ip_cache_{}".format(ip), ip_to_ckey[ip], 60 * 15)
         for cid in cid_to_ckey:
             cache.set("cids_cache_{}".format(cid), cid_to_ckey[cid], 60 * 15)
-
+            
+        cache.set("connection_log_dict", True, 60 * 15)
         return True
 
     @cache_ckey_callable
