@@ -468,7 +468,8 @@ class Player(models.Model):
             else:
                 cid_to_ckey[connection.computerid] = [connection.ckey, ]
 
-        cache.set('connection_log_dict', (ip_to_ckey, cid_to_ckey), 60*15)
+        cache.set(cache_key, (ip_to_ckey, cid_to_ckey), 60*15)
+        return (ip_to_ckey, cid_to_ckey)
 
     @cache_ckey_callable
     def get_ip_alts(self):
