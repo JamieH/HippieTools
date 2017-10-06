@@ -429,6 +429,21 @@ class Player(models.Model):
             return socket.inet_ntoa(struct.pack('!L', ip))
         return list(map(fix_ip, ips))
 
+    @cache_ckey_callable
+    def is_server_banned(self):
+        for ban in self.get_bans():
+            if (ban.bantype == "TEMPBAN" or ban.bantype == "PERMA" or ban.bantype == "PERMABAN") and not ban.is_expired():
+                return True
+        return False
+
+    @cache_ckey_callable
+    def is_banned(self):
+        for ban in self.get_bans():
+            if not ban.is_expired():
+                return True
+        return False
+
+
     class Meta:
         managed = False
         db_table = 'player'
