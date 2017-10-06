@@ -102,11 +102,18 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"
         integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
         crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/b-1.4.2/b-colvis-1.4.2/datatables.min.css"/>
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/b-1.4.2/b-colvis-1.4.2/datatables.min.js"></script>
 <script>
     $(function () {
+        $('[data-toggle="datatable"]').DataTable();
         $('[data-toggle="tooltip"]').tooltip()
+
+
     })
 </script>
+{% block js %}{% endblock %}
 </body>
 
 </html>
