@@ -445,12 +445,21 @@ class Player(models.Model):
                 return True
         return False
 
-    def get_connection_log_dict(self):
+    def get_cids(self):
+        self.get_both()
+        return cache.get("connection_log_dict_cids")
+
+    def get_ips(self):
+        self.get_both()
+        return cache.get("connection_log_dict_ips")
+
+    def get_both(self):
         cache_key = "connection_log_dict"
         cache_value = cache.get(cache_key)
         if cache_value is not None:
-            return cache_value
-
+            print("hitting cache")
+            return True
+        print("not hitting cache :sob:")
         connections = ConnectionLog.objects.all()
         ip_to_ckey = {}
         cid_to_ckey = {}
@@ -468,14 +477,16 @@ class Player(models.Model):
             else:
                 cid_to_ckey[connection.computerid] = [connection.ckey, ]
 
-        cache.set(cache_key, (ip_to_ckey, cid_to_ckey), 60*15)
-        return (ip_to_ckey, cid_to_ckey)
+        cache.set(cache_key, True, 60*15)
+        cache.set(cache_key + "_ips", ip_to_ckey, 60*15)
+        cache.set(cache_key + "_cids", cid_to_ckey, 60*15)
+        return True
 
     @cache_ckey_callable
     def get_ip_alts(self):
         ckeys = []
         ips = set(self.get_connections().values_list('ip', flat=True))
-        d = self.get_connection_log_dict()[0]
+        d = self.get_ips()
         for ip in d:
             for ckey in d[ip]:
                 if ckey is not self.ckey and ckey not in ckeys:
