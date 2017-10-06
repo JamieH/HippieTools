@@ -445,14 +445,6 @@ class Player(models.Model):
                 return True
         return False
 
-    def get_cids(self):
-        self.get_both()
-        return cache.get("connection_log_dict_cids")
-
-    def get_ips(self):
-        self.get_both()
-        return cache.get("connection_log_dict_ips")
-
     def get_both(self):
         cache_key = "connection_log_dict"
         cache_value = cache.get(cache_key)
@@ -477,18 +469,24 @@ class Player(models.Model):
             else:
                 cid_to_ckey[connection.computerid] = [connection.ckey, ]
 
-        cache.set(cache_key, True, 60*15)
-        cache.set(cache_key + "_ips", ip_to_ckey, 60*15)
-        cache.set(cache_key + "_cids", cid_to_ckey, 60*15)
+        for ip in ip_to_ckey:
+            cache.set("ip_cache_{}".format(ip), ip_to_ckey[ip], 60 * 15)
+        for cid in cid_to_ckey:
+            cache.set("cids_cache_{}".format(cid), cid_to_ckey[cid], 60 * 15)
+
         return True
 
     @cache_ckey_callable
     def get_ip_alts(self):
+        self.get_both()
+
         ckeys = []
         ips = set(self.get_connections().values_list('ip', flat=True))
-        d = self.get_ips()
-        for ip in d:
-            for ckey in d[ip]:
+        for ip in ips:
+            ip_ckeys = cache.get("ip_cache_{}".format(ip))
+            if ip_ckeys is None:
+                continue
+            for ckey in ip_ckeys:
                 if ckey is not self.ckey and ckey not in ckeys:
                     ckeys.append(ckey)
         ckeys.remove(self.ckey)
@@ -496,14 +494,18 @@ class Player(models.Model):
 
     @cache_ckey_callable
     def get_cid_alts(self):
+        self.get_both()
+
         ckeys = []
         cids = self.get_cids()
-        d = self.get_connection_log_dict()[1]
-        for cid in d:
-            for ckey in d[cid]:
+        for cid in cids:
+            cid_ckeys = cache.get("cids_cache_{}".format(ip))
+            if ip_ckeys is None:
+                continue
+            for ckey in cid_ckeys:
                 if ckey is not self.ckey and ckey not in ckeys:
                     ckeys.append(ckey)
-
+        ckeys.remove(self.ckey)
         return Player.objects.filter(ckey__in=ckeys)
 
     @cache_ckey_callable
