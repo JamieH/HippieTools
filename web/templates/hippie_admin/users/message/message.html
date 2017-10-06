@@ -1,0 +1,11 @@
+{% load humanize %}
+<div class="card mb-2">
+    <div class="card-header {{ message.get_css }}">
+        {% include "hippie_admin/users/message/message_icons.html" %}
+        {{ message.type|capfirst }} for {{ message.targetckey }} by {{ message.adminckey }}
+        at {{ message.timestamp|naturaltime }} on round: {{ message.round_id }}
+    </div>
+    <div class="card-body">
+        <p class="card-text">{{ message.text }}</p>
+    </div>
+</div>

@@ -1,0 +1,46 @@
+{% load humanize %}
+
+<div class="card mb-2">
+    <div class="card-header {{ ban.get_css }}">
+        {% include "hippie_admin/users/ban/ban_icons.html" %}
+        {{ ban.ckey }} banned from {{ ban.get_what|capfirst }}, {{ ban.bantime|naturaltime }}
+        by {{ ban.a_ckey }}
+    </div>
+    <div class="card-body">
+        <p class="card-text">
+            {{ ban.reason }}
+        </p>
+        <table class="table mb-0">
+            <tbody>
+            <tr>
+                <th>Status</th>
+                <td>{% if ban.is_expired %}Expired{% else %}Active{% endif %}</td>
+                <th>IP</th>
+                <td>{{ ban.get_ip }}</td>
+            </tr>
+            <tr>
+                <th>Ban issued</th>
+                <td>{{ ban.bantime|naturaltime }}</td>
+                <th>CID</th>
+                <td>440991652
+                </td>
+            </tr>
+            <tr>
+                <th>Ban expiration:</th>
+                <td>{{ ban.expiration_time|naturaltime }}</td>
+                <th>Banned from</th>
+                <td>Server</td>
+            </tr>
+            <tr>
+                <th>Duration</th>
+                <td>{{ ban.duration }} minutes</td>
+                <th>Ban was issued on</th>
+                <td>Round #{{ ban.round_id }}</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+
+    </div>
+</div>

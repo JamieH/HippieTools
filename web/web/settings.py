@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'raven.contrib.django.raven_compat',
     'debug_toolbar',
+    'django_activeurl',
     'django_enumfield',
     'allauth',
     'allauth.account',

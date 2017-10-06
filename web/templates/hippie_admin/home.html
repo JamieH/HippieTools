@@ -9,8 +9,8 @@
             <ul class="list-group">
                 {% for memo in memos %}
                     <li class="list-group-item">
-                        <blockquote>{{ memo.memotext }}</blockquote>
-                        <footer>~ {{ memo.ckey }} -- {{ memo.timestamp }}</footer>
+                        <blockquote>{{ memo.text }}</blockquote>
+                        <footer>~ {{ memo.adminckey }} -- {{ memo.timestamp }}</footer>
                     </li>
                 {% endfor %}
             </ul>

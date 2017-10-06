@@ -9,6 +9,9 @@ from __future__ import unicode_literals
 
 from django.db import models
 from hippie_admin.utils.cache import cache_ckey_callable
+from django.utils import timezone
+
+import socket, struct
 
 class Admin(models.Model):
     ckey = models.CharField(max_length=32)
@@ -72,9 +75,61 @@ class Ban(models.Model):
     def __str__(self):
         return "Ban on {} {} by {} on {} for {}".format(self.ckey, self.bantype, self.a_ckey, self.bantime, self.duration)
 
+    def is_expired(self):
+        if self.unbanned == 1:
+            return True
+        if self.get_type() == "PERMA" or self.get_type() == "PERMABAN" or self.get_type() == "JOB_PERMABAN":
+            return False
+        return self.expiration_time < timezone.now()
+
+    def get_ip(self):
+        return socket.inet_ntoa(struct.pack('!L', self.ip))
+
+    def get_what(self):
+        if self.bantype == "JOB_TEMPBAN" or self.bantype == "JOB_PERMABAN":
+            return self.job
+        else:
+            return "Server"
+
+    def get_icon(self):
+        if self.bantype == "JOB_TEMPBAN" or self.bantype == "JOB_PERMABAN":
+            return "fa-briefcase"
+        elif self.bantype == "JOB_TEMPBAN":
+            return "fa-clock-o"
+        elif self.bantype == "PERMA" or self.bantype == "PERMABAN":
+            return "fa-ban"
+
+    def get_type(self):
+        if self.bantype == "TEMPBAN":
+            return "Server (Temporary)"
+        elif self.bantype == "JOB_TEMPBAN":
+            return "Job (Temporary)"
+        elif self.bantype == "JOB_PERMABAN":
+            return "Job (Permanent)"
+        elif self.bantype == "PERMA" or self.bantype == "PERMABAN":
+            return "Server (Permanent)"
+        else:
+            return "TELL JAMIE"
+
+    def get_css(self):
+        if self.is_expired():
+            return "bg-success text-white"
+
+        if self.bantype == "TEMPBAN":
+            return "warning"
+        elif self.bantype == "JOB_TEMPBAN":
+            return "bg-warning text-white"
+        elif self.bantype == "JOB_PERMABAN":
+            return "bg-danger text-white"
+        elif self.bantype == "PERMA" or self.bantype == "PERMABAN":
+            return "bg-danger text-white"
+        else:
+            return ""
+
     class Meta:
         managed = False
         db_table = 'ban'
+        ordering = ["-bantime"]
 
 
 class ConnectionLog(models.Model):
@@ -92,6 +147,7 @@ class ConnectionLog(models.Model):
     class Meta:
         managed = False
         db_table = 'connection_log'
+        ordering = ["-datetime"]
 
 
 class Death(models.Model):
@@ -186,7 +242,7 @@ class Memo(models.Model):
     class Meta:
         managed = False
         db_table = 'memo'
-
+        ordering = ["-timestamp"]
 
 class Mentor(models.Model):
     ckey = models.TextField()
@@ -206,6 +262,7 @@ class MentorMemo(models.Model):
     class Meta:
         managed = False
         db_table = 'mentor_memo'
+        ordering = ["-timestamp"]
 
 
 class Messages(models.Model):
@@ -223,9 +280,22 @@ class Messages(models.Model):
     edits = models.TextField(blank=True, null=True)
     deleted = models.IntegerField()
 
+    def get_css(self):
+        if self.type == "message":
+            return "bg-success text-white"
+        elif self.type == "message sent":
+            return "bg-success text-white"
+        elif self.type == "watchlist entry":
+            return "bg-danger text-white"
+        elif self.type == "note":
+            return "bg-warning"
+        else:
+            return ""
+
     class Meta:
         managed = False
         db_table = 'messages'
+        ordering = ["-timestamp"]
 
 
 class Notes(models.Model):
@@ -244,6 +314,7 @@ class Notes(models.Model):
     class Meta:
         managed = False
         db_table = 'notes'
+        ordering = ["-timestamp"]
 
 
 class Player(models.Model):
@@ -258,25 +329,27 @@ class Player(models.Model):
     accountjoindate = models.DateField(blank=True, null=True)
     flags = models.IntegerField()
 
+    def get_last_ip(self):
+        return socket.inet_ntoa(struct.pack('!L', self.ip))
+
     def get_fields(self):
         return [(field.name, field.value_to_string(self)) for field in Player._meta.fields]
 
     @cache_ckey_callable
     def get_bans(self):
-        print(Ban.objects.filter(ckey=self.ckey))
         return Ban.objects.filter(ckey=self.ckey)
 
     @cache_ckey_callable
     def get_connections(self):
-        return ConnectionLog.filter(ckey=self.ckey)
+        return ConnectionLog.objects.filter(ckey=self.ckey)
 
     @cache_ckey_callable
     def get_notes(self):
-        return Notes.filter(ckey=self.ckey)
+        return Notes.objects.filter(ckey=self.ckey)
 
     @cache_ckey_callable
     def get_messages(self):
-        return Messages.filter(ckey=self.ckey)
+        return Messages.objects.filter(targetckey=self.ckey)
 
     @cache_ckey_callable
     def get_rank(self):
@@ -345,10 +418,22 @@ class Player(models.Model):
     def get_watch(self):
         return Watch.objects.filter(ckey=self.ckey)
 
+    @cache_ckey_callable
+    def get_cids(self):
+        return set(self.get_connections().values_list('computerid', flat=True))
+
+    @cache_ckey_callable
+    def get_ips(self):
+        ips = set(self.get_connections().values_list('ip', flat=True))
+        def fix_ip(ip):
+            return socket.inet_ntoa(struct.pack('!L', ip))
+        return list(map(fix_ip, ips))
+
     class Meta:
         managed = False
         db_table = 'player'
         ordering = ["-lastseen"]
+
 
 class PollOption(models.Model):
     pollid = models.IntegerField()

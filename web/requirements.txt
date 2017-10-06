@@ -9,3 +9,4 @@ django-mailgun
 django-debug-toolbar
 django-redis-cache
 hiredis
+django-activeurl

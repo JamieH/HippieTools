@@ -11,20 +11,22 @@
             <th>ckey</th>
             <th>Rank</th>
             <th>Connections</th>
+            <th>Connections in the last 30 days</th>
         </tr>
         </thead>
         <tbody>
 
-        {% for admin, player in admins.items %}
+        {% for admin, d in admins.items %}
 
             <tr>
                 <td>
-                    <a href="{% url 'hippie_admin:user_show' player.ckey %}">
-                        {% pretty_player player %}
+                    <a href="{% url 'hippie_admin:user_show' d.player.ckey %}">
+                        {% pretty_player d.player %}
                     </a>
                 </td>
                 <td>{{ admin.rank }}</td>
-                <td>555</td>
+                <td>{{ d.total_connections }}</td>
+                <td>{{ d.recent_connections }}</td>
             </tr>
 
         {% empty %}

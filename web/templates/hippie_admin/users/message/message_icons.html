@@ -1,0 +1,26 @@
+{% if message.type == "note" %}
+    <i class="fa fa-sticky-note" title="" data-toggle="tooltip"
+       data-original-title="Note"></i>
+    {% if message.secret %}
+        <i class="fa fa-eye-slash" title="" data-toggle="tooltip"
+           data-original-title="Secret note"></i>
+    {% else %}
+        <i class="fa fa-eye" title="" data-toggle="tooltip"
+           data-original-title="Visible note"></i>
+    {% endif %}
+{% elif message.type == "message" %}
+    <i class="fa fa-bullhorn" title="" data-toggle="tooltip"
+       data-original-title="Message"></i>
+    <i class="fa fa-clock" title="" data-toggle="tooltip"
+       data-original-title="Undelivered"></i>
+{% elif message.type == "message sent" %}
+    <i class="fa fa-bullhorn" title="" data-toggle="tooltip"
+       data-original-title="Message"></i>
+    <i class="fa fa-check" title="" data-toggle="tooltip"
+       data-original-title="Delivered"></i>
+{% elif message.type == "watchlist entry" %}
+    <i class="fa fa-bullhorn" title="" data-toggle="tooltip"
+       data-original-title="Message"></i>
+    <i class="fa fa-exclamation" title="" data-toggle="tooltip"
+       data-original-title="Watchlist Entry"></i>
+{% endif %}

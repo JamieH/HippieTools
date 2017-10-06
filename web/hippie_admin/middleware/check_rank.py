@@ -24,7 +24,7 @@ def check_rank(get_response):
         ckey = CKEY_TO_KEY_RE.sub('', ckey)
         request.current_player = Player.objects.get(ckey=ckey)
 
-        if request.current_player.get_rank() not in ["Host", "GameMaster", "GameAdmin"]:
+        if request.current_player.get_rank() not in ["Host", "HeadAdmin", "GameMaster", "GameAdmin"]:
             logout(request)
             return HttpResponseForbidden("You should not be here!")
 
