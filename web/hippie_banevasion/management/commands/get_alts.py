@@ -39,7 +39,7 @@ class Command(BaseCommand):
                 return x.get_player()
 
             # client alts
-            client_alts = map(get_player, evader.get_alts())
+            client_alts = list(map(get_player, evader.get_alts()))
             # player alts
             player_alts = evader.get_player().get_alts()
             alts = client_alts + list(set(player_alts) - set(client_alts))
@@ -76,7 +76,7 @@ class Command(BaseCommand):
 
             def print_list(d):
                 for evader, alts in d.items():
-                    print_alt(evader, 1)
+                    print_alt(evader.get_player(), 1)
 
                     for alt in alts:
                         print_alt(alt, 2)

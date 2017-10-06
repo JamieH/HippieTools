@@ -10,6 +10,8 @@ from __future__ import unicode_literals
 from django.db import models
 from hippie_admin.utils.cache import cache_ckey_callable
 from django.utils import timezone
+from django.core.cache import cache
+from tqdm import tqdm
 
 import socket, struct
 
@@ -443,18 +445,53 @@ class Player(models.Model):
                 return True
         return False
 
+    def get_connection_log_dict(self):
+        cache_key = "connection_log_dict"
+        cache_value = cache.get(cache_key)
+        if cache_value is not None:
+            return cache_value
+
+        connections = ConnectionLog.objects.all()
+        ip_to_ckey = {}
+        cid_to_ckey = {}
+
+        for connection in connections:
+            if connection.ip in ip_to_ckey:
+                if connection.ckey not in ip_to_ckey[connection.ip]:
+                    ip_to_ckey[connection.ip].append(connection.ckey)
+            else:
+                ip_to_ckey[connection.ip] = [connection.ckey, ]
+
+            if connection.computerid in cid_to_ckey:
+                if connection.ckey not in cid_to_ckey[connection.computerid]:
+                    cid_to_ckey[connection.computerid].append(connection.ckey)
+            else:
+                cid_to_ckey[connection.computerid] = [connection.ckey, ]
+
+        cache.set('connection_log_dict', (ip_to_ckey, cid_to_ckey), 60*15)
+
     @cache_ckey_callable
     def get_ip_alts(self):
+        ckeys = []
         ips = set(self.get_connections().values_list('ip', flat=True))
-        ckeys = list(ConnectionLog.objects.filter(ip__in=ips).values_list('ckey', flat=True))
+        d = self.get_connection_log_dict()[0]
+        for ip in d:
+            for ckey in d[ip]:
+                if ckey is not self.ckey and ckey not in ckeys:
+                    ckeys.append(ckey)
         ckeys.remove(self.ckey)
         return Player.objects.filter(ckey__in=ckeys)
 
     @cache_ckey_callable
     def get_cid_alts(self):
+        ckeys = []
         cids = self.get_cids()
-        ckeys = list(ConnectionLog.objects.filter(computerid__in=cids).values_list('ckey', flat=True))
-        ckeys.remove(self.ckey)
+        d = self.get_connection_log_dict()[1]
+        for cid in d:
+            for ckey in d[cid]:
+                if ckey is not self.ckey and ckey not in ckeys:
+                    ckeys.append(ckey)
+
         return Player.objects.filter(ckey__in=ckeys)
 
     @cache_ckey_callable
