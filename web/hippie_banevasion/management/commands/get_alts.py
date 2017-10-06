@@ -9,6 +9,7 @@ class Command(BaseCommand):
 
         clients = Client.objects.all()
         #clients = Client.objects.filter(ckey="Bartels")
+        #clients = Client.objects.filter(ckey__in=["SuperbDingaling", "Zeopoi", "ItsMeReuben", "ShroudedCorpse", "Aara"])
         evaders = []
         self.stdout.write("Getting clients")
         for client in tqdm(clients):
@@ -16,21 +17,68 @@ class Command(BaseCommand):
             if len(alts) > 0:
                 evaders.append(client)
 
+        none_banned = {}
+        all_banned = {}
+        some_banned = {}
+
         for evader in evaders:
             ep = evader.get_player()
-            if ep.is_server_banned():
-                self.stdout.write(self.style.ERROR("BANNED: {}".format(evader.ckey)))
-            else:
-                self.stdout.write(self.style.NOTICE(evader.ckey))
-            for alt in evader.get_alts():
+            banned = ep.is_server_banned()
+            alts_none_banned = True
+            alts_some_unbanned = False
+
+            alts = evader.get_alts()
+            for alt in alts:
                 p = alt.get_player()
                 if p.is_server_banned():
-                    self.stdout.write("\a", ending="")
-                    self.stdout.write(self.style.ERROR("\t\t BANNED: {}".format(alt)))
+                    alts_none_banned = False
                 elif p.is_banned():
-                    self.stdout.write("\a", ending="")
-                    self.stdout.write(self.style.WARNING("\t\t JOBBAN: {}".format(alt)))
+                    alts_none_banned = False
                 else:
-                    self.stdout.write(self.style.NOTICE("\t\t {}".format(alt)))
+                    alts_some_unbanned = True
 
-        self.stdout.write("\n\n{} alts were found.".format(len(evaders)))
+            # if they're not banned and no alts banned
+            if not banned and alts_none_banned:
+                none_banned[evader] = alts
+            # if they're banned but some alts are unbanned
+            elif banned and alts_some_unbanned:
+                some_banned[evader] = alts
+            # if they're not banned but some alts have been banned
+            elif not banned and not alts_none_banned:
+                some_banned[evader] = alts
+            # they're banned and all alts are banned
+            else:
+                all_banned[evader] = alts
+
+            def print_list(d):
+                for evader, alts in d.items():
+                    ep = evader.get_player()
+                    if ep.is_server_banned():
+                        self.stdout.write(self.style.ERROR("\tBANNED: {}".format(evader.ckey)))
+                    else:
+                        self.stdout.write(self.style.NOTICE("\t{}".format(evader.ckey)))
+
+                    for alt in alts:
+                        if alt.get_player().is_server_banned():
+                            self.stdout.write("\a", ending="")
+                            self.stdout.write(self.style.ERROR("\t\t BANNED: {}".format(alt)))
+                        elif alt.get_player().is_banned():
+                            self.stdout.write("\a", ending="")
+                            self.stdout.write(self.style.WARNING("\t\t JOBBAN: {}".format(alt)))
+                        else:
+                            self.stdout.write(self.style.NOTICE("\t\t {}".format(alt)))
+
+                    self.stdout.write("")
+
+        self.stdout.write(self.style.NOTICE("\n\nNO BANS:"))
+        print_list(none_banned)
+
+        self.stdout.write(self.style.WARNING("\n\nALL BANS:"))
+        print_list(all_banned)
+
+        self.stdout.write(self.style.ERROR("\n\bSOME BANS:"))
+        print_list(some_banned)
+
+        self.stdout.write("\n\n{} alts with 0 bans were found.".format(len(none_banned)))
+        self.stdout.write("{} alts with all bans were found.".format(len(all_banned)))
+        self.stdout.write("{} alts with SOME bans were found.".format(len(some_banned)))
