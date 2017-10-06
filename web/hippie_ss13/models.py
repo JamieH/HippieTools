@@ -443,6 +443,25 @@ class Player(models.Model):
                 return True
         return False
 
+    @cache_ckey_callable
+    def get_ip_alts(self):
+        ips = set(self.get_connections().values_list('ip', flat=True))
+        ckeys = list(ConnectionLog.objects.filter(ip__in=ips).values_list('ckey', flat=True))
+        ckeys.remove(self.ckey)
+        return Player.objects.filter(ckey__in=ckeys)
+
+    @cache_ckey_callable
+    def get_cid_alts(self):
+        cids = self.get_cids()
+        ckeys = list(ConnectionLog.objects.filter(computerid__in=cids).values_list('ckey', flat=True))
+        ckeys.remove(self.ckey)
+        return Player.objects.filter(ckey__in=ckeys)
+
+    @cache_ckey_callable
+    def get_alts(self):
+        ip_alts = list(self.get_ip_alts())
+        cid_alts = list(self.get_cid_alts())
+        return ip_alts + list(set(cid_alts) - set(ip_alts))
 
     class Meta:
         managed = False

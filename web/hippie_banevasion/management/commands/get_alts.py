@@ -12,27 +12,42 @@ class Command(BaseCommand):
         #clients = Client.objects.filter(ckey__in=["SuperbDingaling", "Zeopoi", "ItsMeReuben", "ShroudedCorpse", "Aara"])
         evaders = []
         self.stdout.write("Getting clients")
+
+        # Do they have any alts?
         for client in tqdm(clients):
             alts = client.get_alts()
             if len(alts) > 0:
                 evaders.append(client)
+            else:
+                alts = client.get_player().get_alts()
+                if len(alts) > 0:
+                    evaders.append(client)
 
+        # Nice lists
         none_banned = {}
         all_banned = {}
         some_banned = {}
 
+        # For each evader:
         for evader in evaders:
             ep = evader.get_player()
             banned = ep.is_server_banned()
             alts_none_banned = True
             alts_some_unbanned = False
 
-            alts = evader.get_alts()
+            def get_player(x):
+                return x.get_player()
+
+            # client alts
+            client_alts = map(get_player, evader.get_alts())
+            # player alts
+            player_alts = evader.get_player().get_alts()
+            alts = client_alts + list(set(player_alts) - set(client_alts))
+
             for alt in alts:
-                p = alt.get_player()
-                if p.is_server_banned():
+                if alt.is_server_banned():
                     alts_none_banned = False
-                elif p.is_banned():
+                elif alt.is_banned():
                     alts_none_banned = False
                 else:
                     alts_some_unbanned = True
@@ -52,10 +67,9 @@ class Command(BaseCommand):
 
             def print_alt(alt, tab_count=1):
                 tabs = "\t" * tab_count
-                ep = alt.get_player()
-                if ep.is_server_banned():
+                if alt.is_server_banned():
                     self.stdout.write(self.style.ERROR("{}BANNED: {}".format(tabs, alt.ckey)))
-                elif ep.is_banned():
+                elif alt.is_banned():
                     self.stdout.write(self.style.WARNING("{}JOBBAN: {}".format(tabs, alt.ckey)))
                 else:
                     self.stdout.write(self.style.NOTICE("{}{}".format(tabs, alt.ckey)))
