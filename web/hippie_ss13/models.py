@@ -473,7 +473,7 @@ class Player(models.Model):
             cache.set("ip_cache_{}".format(ip), ip_to_ckey[ip], 60 * 15)
         for cid in cid_to_ckey:
             cache.set("cids_cache_{}".format(cid), cid_to_ckey[cid], 60 * 15)
-            
+
         cache.set("connection_log_dict", True, 60 * 15)
         return True
 
@@ -500,8 +500,8 @@ class Player(models.Model):
         ckeys = []
         cids = self.get_cids()
         for cid in cids:
-            cid_ckeys = cache.get("cids_cache_{}".format(ip))
-            if ip_ckeys is None:
+            cid_ckeys = cache.get("cids_cache_{}".format(cid))
+            if cid_ckeys is None:
                 continue
             for ckey in cid_ckeys:
                 if ckey is not self.ckey and ckey not in ckeys:
