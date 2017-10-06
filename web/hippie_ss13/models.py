@@ -78,7 +78,7 @@ class Ban(models.Model):
     def is_expired(self):
         if self.unbanned == 1:
             return True
-        if self.get_type() == "PERMA" or self.get_type() == "PERMABAN" or self.get_type() == "JOB_PERMABAN":
+        if self.bantype == "PERMA" or self.bantype == "PERMABAN" or self.bantype == "JOB_PERMABAN":
             return False
         return self.expiration_time < timezone.now()
 

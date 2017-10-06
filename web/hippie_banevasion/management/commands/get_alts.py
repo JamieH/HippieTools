@@ -8,6 +8,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         clients = Client.objects.all()
+        #clients = Client.objects.filter(ckey="Bartels")
         evaders = []
         self.stdout.write("Getting clients")
         for client in tqdm(clients):
@@ -16,7 +17,11 @@ class Command(BaseCommand):
                 evaders.append(client)
 
         for evader in evaders:
-            self.stdout.write(self.style.NOTICE(evader.ckey))
+            ep = evader.get_player()
+            if ep.is_server_banned():
+                self.stdout.write(self.style.ERROR("BANNED: {}".format(evader.ckey)))
+            else:
+                self.stdout.write(self.style.NOTICE(evader.ckey))
             for alt in evader.get_alts():
                 p = alt.get_player()
                 if p.is_server_banned():

@@ -86,10 +86,10 @@ class Client(models.Model):
     def get_alts(self):
         def recurse_alts(original_acc, alts, found_alts):
             for alt in found_alts:
-                if alt in alts or alt.ckey == original_key:
+                if alt in alts or alt.ckey == original_acc:
                     continue
-                    alts.append(alt)
-                    alts = find_new_alts(original_acc, alts, alt.related_accounts.all())
+                alts.append(alt)
+                alts = recurse_alts(original_acc, alts, alt.related_accounts.all())
             return alts
 
         alts = []
