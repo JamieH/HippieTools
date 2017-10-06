@@ -92,13 +92,7 @@ class Client(models.Model):
                 alts = recurse_alts(original_acc, alts, alt.related_accounts.all())
             return alts
 
-        alts = []
-        our_alts = self.related_accounts.all()
-        for alt in our_alts:
-            alts.append(alt)
-            found_alts = recurse_alts(self.ckey, alts, [alt,])
-            alts = alts + list(set(found_alts) - set(alts))
-        return alts
+        return recurse_alts(self.ckey, [], self.related_accounts.all())
 
 
 class SecurityEvent(models.Model):

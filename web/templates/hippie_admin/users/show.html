@@ -95,6 +95,16 @@
                     <small>({{ alts|length }})</small>
                 </h2>
             </div>
+            {% if user.is_superuser %}
+                <p>last_seen: {{ client.last_seen }} | last_post: {{ client.last_post }}</p>
+                <pre>{% for fp in client.fingerprints.all %}- {{ fp }}
+                {% endfor %}</pre>
+            {% endif %}
+            {% if client == None or client.last_post == None %}
+            <div class="alert alert-warning" role="alert">
+                The ban evasion system has never ran against this player!
+            </div>
+            {% endif %}
             {% for alt in alts %}
                 <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.get_ckey %}"> show</a></li>
             {% empty %}
