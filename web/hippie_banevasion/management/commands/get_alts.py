@@ -50,23 +50,22 @@ class Command(BaseCommand):
             else:
                 all_banned[evader] = alts
 
+            def print_alt(alt, tab_count=1):
+                tabs = "\t" * tab_count
+                ep = alt.get_player()
+                if ep.is_server_banned():
+                    self.stdout.write(self.style.ERROR("{}BANNED: {}".format(tabs, alt.ckey)))
+                elif ep.is_banned():
+                    self.stdout.write(self.style.WARNING("{}JOBBAN: {}".format(tabs, alt.ckey)))
+                else:
+                    self.stdout.write(self.style.NOTICE("{}{}".format(tabs, alt.ckey)))
+
             def print_list(d):
                 for evader, alts in d.items():
-                    ep = evader.get_player()
-                    if ep.is_server_banned():
-                        self.stdout.write(self.style.ERROR("\tBANNED: {}".format(evader.ckey)))
-                    else:
-                        self.stdout.write(self.style.NOTICE("\t{}".format(evader.ckey)))
+                    print_alt(evader, 1)
 
                     for alt in alts:
-                        if alt.get_player().is_server_banned():
-                            self.stdout.write("\a", ending="")
-                            self.stdout.write(self.style.ERROR("\t\t BANNED: {}".format(alt)))
-                        elif alt.get_player().is_banned():
-                            self.stdout.write("\a", ending="")
-                            self.stdout.write(self.style.WARNING("\t\t JOBBAN: {}".format(alt)))
-                        else:
-                            self.stdout.write(self.style.NOTICE("\t\t {}".format(alt)))
+                        print_alt(alt, 2)
 
                     self.stdout.write("")
 
