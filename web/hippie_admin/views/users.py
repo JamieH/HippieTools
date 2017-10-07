@@ -49,6 +49,11 @@ class UserListView(LoginRequiredMixin, ListView):
     paginate_by = 30
     template_name = "hippie_admin/users/list.html"
 
+    def get_context_data(self, **kwargs):
+        context = super(UserListView, self).get_context_data()
+        context['q'] = self.request.GET.get('q') or ""
+        return context
+
     def get_queryset(self):
         result = super(UserListView, self).get_queryset()
 
