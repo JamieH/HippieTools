@@ -21,7 +21,6 @@ class XenforoOAuth2Adapter(OAuth2Adapter):
     profile_url = '{0}/api/index.php?users/me'.format(web_url)
 
     def complete_login(self, request, app, token, **kwargs):
-        print(token)
         params = {'oauth_token': token.token}
         resp = requests.get(self.profile_url, params=params)
         extra_data = resp.json()

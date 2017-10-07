@@ -2,6 +2,7 @@ from allauth.socialaccount import app_settings
 from allauth.socialaccount.providers.base import ProviderAccount
 from allauth.socialaccount.providers.oauth2.provider import OAuth2Provider
 
+from hippie_banevasion.models import CKEY_TO_KEY_RE
 
 class XenforoAccount(ProviderAccount):
     def get_profile_url(self):
@@ -28,6 +29,8 @@ class XenforoProvider(OAuth2Provider):
         fields = user.get('user_fields')
         ckey = fields.get('ckey')
         ckey_value = ckey.get('value')
+        ckey_value = ckey_value.lower()
+        ckey_value = CKEY_TO_KEY_RE.sub('', ckey_value)
 
         return dict(email=user.get('user_email'),
                     username=ckey_value,
