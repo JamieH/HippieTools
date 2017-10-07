@@ -31,6 +31,6 @@ class XenforoProvider(OAuth2Provider):
 
         return dict(email=user.get('user_email'),
                     username=ckey_value,
-                    name=data.get('username'))
+                    name=user.get('username'))
 
 provider_classes = [XenforoProvider]
