@@ -473,6 +473,22 @@ class Player(models.Model):
         cid_alts = list(self.get_cid_alts())
         return ip_alts + list(set(cid_alts) - set(ip_alts))
 
+    def get_standing_css(self):
+        if self.is_server_banned():
+            return "list-group-item-danger"
+        elif self.is_banned():
+            return "list-group-item-warning"
+        else:
+            return "list-group-item-success"
+
+    def get_standing(self):
+        if self.is_server_banned():
+            return "Server Banned"
+        elif self.is_banned():
+            return "Job Banned"
+        else:
+            return "Not banned"
+
     class Meta:
         managed = False
         db_table = 'player'

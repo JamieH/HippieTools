@@ -40,9 +40,10 @@
                     {{ player.get_rank }}
                 </li>
                 <li
-                        class="list-group-item list-group-item-success"><strong class="list-group-item-heading">Account
+                        class="list-group-item {{ player.get_standing_css }}"><strong class="list-group-item-heading">Account
                     standing</strong>
-                    ?
+                    {{ player.get_standing }}
+
                 </li>
                 <li
                         class="list-group-item"><strong class="list-group-item-heading">First seen</strong>

@@ -33,7 +33,7 @@ urlpatterns = [
     url(r'^connections/$', connections.ConnectionListView.as_view(), name='connection_list'),
 
     url(r'^users/$', users.UserListView.as_view(), name='user_list'),
-    url(r'^users/(?P<ckey>[a-z0-9]+)$', users.user_show, name='user_show'),
+    url(r'^users/(?P<ckey>[a-zA-Z0-9_\w\ ]+)$', users.user_show, name='user_show'),
 
     url(r'^cid/(?P<cid>[a-z0-9]+)$', cid.CIDView.as_view(), name='cid_show'),
     url(r'^ip/(?P<ip>[0-9.]+)$', ip.IPView.as_view(), name='ip_show'),

@@ -4,7 +4,7 @@ from django_enumfield import EnumField
 from django.template.defaultfilters import truncatechars
 
 from hippie_ss13.models import Player
-import hippie_admin.utils.fmt
+from hippie_admin.utils import fmt
 
 # Create your models here.
 
