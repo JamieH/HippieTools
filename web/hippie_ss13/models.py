@@ -446,32 +446,22 @@ class Player(models.Model):
 
     @cache_ckey_callable
     def get_ip_alts(self):
-        ips = []
         with connections['ss13'].cursor() as cursor:
-            cursor.execute("SELECT DISTINCT ip FROM hippie_game.connection_log WHERE ckey = %s", [self.ckey])
-            ips = list(itertools.chain.from_iterable(cursor))
-
-        ckeys = []
-        with connections['ss13'].cursor() as cursor:
-            or_query = " OR ip = %s" * (len(ips) - 1)
-            query = "SELECT DISTINCT ckey FROM hippie_game.connection_log WHERE ip = %s" + or_query
-            cursor.execute(query, ips)
+            cursor.execute(
+                "SELECT DISTINCT ckey FROM connection_log WHERE ip IN (SELECT DISTINCT ip FROM connection_log WHERE ckey = %s)",
+                (self.ckey,)
+            )
             ckeys = list(itertools.chain.from_iterable(cursor))
         ckeys.remove(self.ckey)
         return Player.objects.filter(ckey__in=ckeys)
 
     @cache_ckey_callable
     def get_cid_alts(self):
-        cids = []
         with connections['ss13'].cursor() as cursor:
-            cursor.execute("SELECT DISTINCT computerid FROM hippie_game.connection_log WHERE ckey = %s", [self.ckey])
-            cids = list(itertools.chain.from_iterable(cursor))
-
-        ckeys = []
-        with connections['ss13'].cursor() as cursor:
-            or_query = " OR computerid = %s" * (len(cids) - 1)
-            query = "SELECT DISTINCT ckey FROM hippie_game.connection_log WHERE computerid = %s" + or_query
-            cursor.execute(query, cids)
+            cursor.execute(
+                "SELECT DISTINCT ckey FROM connection_log WHERE computerid IN (SELECT DISTINCT computerid FROM connection_log WHERE ckey = %s)",
+                (self.ckey,)
+            )
             ckeys = list(itertools.chain.from_iterable(cursor))
         ckeys.remove(self.ckey)
         return Player.objects.filter(ckey__in=ckeys)
