@@ -9,11 +9,12 @@ from django.views.generic.list import ListView
 
 from hippie_banevasion.models import Client
 from hippie_ss13.models import Player
+from hippie_admin.utils import fmt
 
 
 @login_required
 def user_show(request, ckey, template_name='hippie_admin/users/show.html'):
-    player = get_object_or_404(Player, ckey=ckey)
+    player = get_object_or_404(Player, ckey=fmt.ckey(ckey))
     client = None
     alts = None
 

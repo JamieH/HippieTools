@@ -1,12 +1,11 @@
-import re
 from django.db import models
 from .enums import SecurityEventEnum
 from django_enumfield import EnumField
 from django.template.defaultfilters import truncatechars
 
 from hippie_ss13.models import Player
+import hippie_admin.utils.fmt
 
-CKEY_TO_KEY_RE = re.compile(r"[^a-zA-Z0-9@%]")
 # Create your models here.
 
 
@@ -76,9 +75,7 @@ class Client(models.Model):
         return [(field.name, field.value_to_string(self)) for field in Client._meta.fields]
 
     def get_ckey(self):
-        ck = self.ckey.lower()
-        ck = CKEY_TO_KEY_RE.sub('', ck)
-        return ck
+        return fmt.ckey(self.ckey)
 
     def get_player(self):
         return Player.objects.get(ckey=self.get_ckey())

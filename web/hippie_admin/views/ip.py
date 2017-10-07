@@ -1,6 +1,6 @@
 from django.views.generic import TemplateView
 from hippie_ss13.models import ConnectionLog, Player
-import hippie_admin.utils.format as fmt
+from hippie_admin.utils import fmt
 
 
 class IPView(TemplateView):

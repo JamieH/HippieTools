@@ -2,7 +2,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.core.urlresolvers import resolve
-from hippie_banevasion.models import Client, CKEY_TO_KEY_RE
+from hippie_admin.utils import fmt
 from hippie_ss13.models import Player
 
 def check_rank(get_response):
@@ -20,8 +20,7 @@ def check_rank(get_response):
             response = get_response(request)
             return response
 
-        ckey = request.user.username
-        ckey = CKEY_TO_KEY_RE.sub('', ckey)
+        ckey = fmt.ckey(request.user.username)
         request.current_player = Player.objects.get(ckey=ckey)
 
         if request.current_player.get_rank() not in ["Host", "HeadAdmin", "GameMaster", "GameAdmin"]:

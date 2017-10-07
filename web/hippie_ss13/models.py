@@ -8,7 +8,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, connections
-import hippie_admin.utils.format as fmt
+from hippie_admin.utils import fmt
 from hippie_admin.utils.cache import cache_ckey_callable
 from django.utils import timezone
 import itertools
