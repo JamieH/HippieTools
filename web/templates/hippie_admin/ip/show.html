@@ -1,0 +1,17 @@
+{% extends "hippie_admin/base.html" %}
+{%load pretty_key %}
+
+{% block content %}
+    <h1>IP: {{ ip }}</h1>
+    <ul>
+        {% for player in players %}
+            <li><a href="{% url 'hippie_admin:user_show' player.ckey %}">
+                        {% pretty_player player %}
+                    </a></li>
+        {% empty %}
+            <li>No ckeys for this IP.</li>
+        {% endfor %}
+    </ul>
+
+
+{% endblock %}

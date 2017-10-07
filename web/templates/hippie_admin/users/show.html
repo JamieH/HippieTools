@@ -60,19 +60,10 @@
             <ul class="list-group">
 
                 <li class="list-group-item ipaddr"><strong class="list-group-item-heading">Last IP</strong>
-                    {{ player.get_last_ip }}
+                    <a href="{% url 'hippie_admin:ip_show' player.get_last_ip %}">{{ player.get_last_ip }}</a>
                 </li>
                 <li class="list-group-item cid"><strong class="list-group-item-heading">Last CID</strong>
-                    {{ player.computerid }}
-                    <!--<div
-                            class="ql">(<a href="https://tools.hippiestation.com/stats/tgdb/bans.php?cid=563291690"><i
-                            class="fa fa-ban"></i></a>)(
-                        <a
-                                href="https://tools.hippiestation.com/stats/tgdb/players.php?cid=563291690"><i
-                                class="fa fa-user"></i>
-                        </a>)(<a href="https://tools.hippiestation.com/stats/tgdb/conn.php?cid=563291690"><i
-                                class="fa fa-plug"></i></a>)
-                    </div>-->
+                    <a href="{% url 'hippie_admin:cid_show' player.computerid %}">{{ player.computerid }}</a>
                 </li>
                 <li class="list-group-item"><strong class="list-group-item-heading">IPs seen</strong>
                     {{ player.get_ips|length }}
@@ -129,11 +120,11 @@
                 <ul>
                 <h4>IPs:</h4>
                 {% for ip in player.get_ips %}
-                    <li>{{ ip }}</li>
+                    <li><a href="{% url 'hippie_admin:ip_show' ip %}">{{ ip }}</a></li>
                 {% endfor %}
                 <h4>CIDs:</h4>
                 {% for cid in player.get_cids %}
-                    <li>{{ cid }}</li>
+                    <li><a href="{% url 'hippie_admin:cid_show' cid %}">{{ cid }}</a></li>
                 {% endfor %}
                 </ul>
             </div>

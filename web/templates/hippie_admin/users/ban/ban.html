@@ -16,13 +16,20 @@
                 <th>Status</th>
                 <td>{% if ban.is_expired %}Expired{% else %}Active{% endif %}</td>
                 <th>IP</th>
-                <td>{{ ban.get_ip }}</td>
+                <td>
+                    <a href="{% url 'hippie_admin:ip_show' ban.get_ip %}">{{ ban.get_ip }}</a>
+                </td>
             </tr>
             <tr>
                 <th>Ban issued</th>
                 <td>{{ ban.bantime|naturaltime }}</td>
                 <th>CID</th>
-                <td>440991652
+                <td>
+                    {% if ban.computerid %}
+                    <a href="{% url 'hippie_admin:cid_show' ban.computerid %}">{{ ban.computerid }}</a>
+                    {% else %}
+                        {{ ban.computerid }}
+                    {% endif %}
                 </td>
             </tr>
             <tr>

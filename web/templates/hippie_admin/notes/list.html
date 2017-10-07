@@ -1,35 +1,7 @@
 {% extends "hippie_admin/base.html" %}
 
 {% block content %}
-    <h1>Notes</h1>
+    <h1>CID: {{ cid }}</h1>
 
-    <form id="searchform" action="{% url 'hippie_admin:user_list' %}" method="get" accept-charset="utf-8">
-        <button class="searchbutton" type="submit">
-            <i class="fa fa-search"></i>
-        </button>
-        <input class="searchfield" id="searchbox" name="q" type="text" placeholder="Search">
-    </form>
 
-    <ul>
-        {% for note in object_list %}
-            <li>{{ note }} - <a href="{% url 'hippie_admin:user_show' note.id %}"> show</a></li>
-        {% empty %}
-            <li>No notes yet.</li>
-        {% endfor %}
-    </ul>
-    {% if is_paginated %}
-        <div class="pagination">
-            <span class="page-links">
-                {% if page_obj.has_previous %}
-                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-                {% endif %}
-                <span class="page-current">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                </span>
-                {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}">next</a>
-                {% endif %}
-            </span>
-        </div>
-    {% endif %}
 {% endblock %}

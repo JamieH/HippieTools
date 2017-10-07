@@ -8,10 +8,11 @@
 from __future__ import unicode_literals
 
 from django.db import models, connections
+import hippie_admin.utils.format as fmt
 from hippie_admin.utils.cache import cache_ckey_callable
 from django.utils import timezone
 import itertools
-import socket, struct
+
 
 class Admin(models.Model):
     ckey = models.CharField(max_length=32)
@@ -84,7 +85,7 @@ class Ban(models.Model):
         return self.expiration_time < timezone.now()
 
     def get_ip(self):
-        return socket.inet_ntoa(struct.pack('!L', self.ip))
+        return fmt.int_ip(self.ip)
 
     def get_what(self):
         if self.bantype == "JOB_TEMPBAN" or self.bantype == "JOB_PERMABAN":
@@ -331,7 +332,7 @@ class Player(models.Model):
     flags = models.IntegerField()
 
     def get_last_ip(self):
-        return socket.inet_ntoa(struct.pack('!L', self.ip))
+        return fmt.int_ip(self.ip)
 
     def get_fields(self):
         return [(field.name, field.value_to_string(self)) for field in Player._meta.fields]
@@ -427,7 +428,7 @@ class Player(models.Model):
     def get_ips(self):
         ips = set(self.get_connections().values_list('ip', flat=True))
         def fix_ip(ip):
-            return socket.inet_ntoa(struct.pack('!L', ip))
+            return fmt.int_ip(ip)
         return list(map(fix_ip, ips))
 
     @cache_ckey_callable

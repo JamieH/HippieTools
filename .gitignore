@@ -103,3 +103,4 @@ web/include
 web/gunicorn_start
 pip-selfcheck.json
 web/.idea
+web/static

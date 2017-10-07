@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 
-from hippie_admin.views import frontend, users, bans, connections, notes, admins
+from hippie_admin.views import frontend, users, bans, connections, notes, admins, cid, ip
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -34,6 +34,9 @@ urlpatterns = [
 
     url(r'^users/$', users.UserListView.as_view(), name='user_list'),
     url(r'^users/(?P<ckey>[a-z0-9]+)$', users.user_show, name='user_show'),
+
+    url(r'^cid/(?P<cid>[a-z0-9]+)$', cid.CIDView.as_view(), name='cid_show'),
+    url(r'^ip/(?P<ip>[0-9.]+)$', ip.IPView.as_view(), name='ip_show'),
 
     url(r'^accounts/', include('allauth.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
