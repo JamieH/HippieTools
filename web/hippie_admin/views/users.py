@@ -16,18 +16,18 @@ from hippie_admin.utils import fmt
 def user_show(request, ckey, template_name='hippie_admin/users/show.html'):
     player = get_object_or_404(Player, ckey=fmt.ckey(ckey))
     client = None
-    alts = None
+    hbest_alts = None
 
     try:
         client = Client.objects.get(ckey=player.ckey)
     except Client.DoesNotExist:
         pass
     else:
-        hbest_alts = client.get_alts() or []
-        ip_alts = player.get_ip_alts() or []
-        cid_alts = player.get_cid_alts() or []
-        ip_cid_alts = set(ip_alts) - (set(ip_alts) - set(cid_alts)) or []
+        hbest_alts = client.get_alts()
 
+    ip_alts = player.get_ip_alts()
+    cid_alts = player.get_cid_alts()
+    ip_cid_alts = set(ip_alts) - (set(ip_alts) - set(cid_alts))
 
     context = {
         'player': player,
