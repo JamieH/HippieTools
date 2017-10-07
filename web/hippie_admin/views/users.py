@@ -16,7 +16,7 @@ from hippie_admin.utils import fmt
 def user_show(request, ckey, template_name='hippie_admin/users/show.html'):
     player = get_object_or_404(Player, ckey=fmt.ckey(ckey))
     client = None
-    hbest_alts = None
+    hbest_alts = []
 
     try:
         client = Client.objects.get(ckey=player.ckey)
