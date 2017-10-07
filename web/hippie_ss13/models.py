@@ -10,11 +10,7 @@ from __future__ import unicode_literals
 from django.db import models, connections
 from hippie_admin.utils.cache import cache_ckey_callable
 from django.utils import timezone
-from django.core.cache import cache
-
 import itertools
-from tqdm import tqdm
-
 import socket, struct
 
 class Admin(models.Model):
@@ -77,7 +73,8 @@ class Ban(models.Model):
     unbanned_ip = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return "Ban on {} {} by {} on {} for {}".format(self.ckey, self.bantype, self.a_ckey, self.bantime, self.duration)
+        r = "Ban on {} {} by {} on {} for {}".format(self.ckey, self.bantype, self.a_ckey, self.bantime, self.duration)
+        return r
 
     def is_expired(self):
         if self.unbanned == 1:
@@ -466,12 +463,12 @@ class Player(models.Model):
     @cache_ckey_callable
     def get_cid_alts(self):
         cids = []
-        with connection.cursor() as cursor:
+        with connections['ss13'].cursor() as cursor:
             cursor.execute("SELECT DISTINCT computerid FROM hippie_game.connection_log WHERE ckey = %s", [self.ckey])
             cids = list(itertools.chain.from_iterable(cursor))
 
         ckeys = []
-        with connection.cursor() as cursor:
+        with connections['ss13'].cursor() as cursor:
             or_query = " OR computerid = %s" * (len(cids) - 1)
             query = "SELECT DISTINCT ckey FROM hippie_game.connection_log WHERE computerid = %s" + or_query
             cursor.execute(query, cids)
