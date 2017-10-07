@@ -7,10 +7,12 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from __future__ import unicode_literals
 
-from django.db import models
+from django.db import models, connection
 from hippie_admin.utils.cache import cache_ckey_callable
 from django.utils import timezone
 from django.core.cache import cache
+
+import itertools
 from tqdm import tqdm
 
 import socket, struct
@@ -445,65 +447,35 @@ class Player(models.Model):
                 return True
         return False
 
-    def get_both(self):
-        cache_key = "connection_log_dict"
-        cache_value = cache.get(cache_key)
-        if cache_value is not None:
-            return True
-        connections = ConnectionLog.objects.all()
-        ip_to_ckey = {}
-        cid_to_ckey = {}
-
-        for connection in connections:
-            if connection.ip in ip_to_ckey:
-                if connection.ckey not in ip_to_ckey[connection.ip]:
-                    ip_to_ckey[connection.ip].append(connection.ckey)
-            else:
-                ip_to_ckey[connection.ip] = [connection.ckey, ]
-
-            if connection.computerid in cid_to_ckey:
-                if connection.ckey not in cid_to_ckey[connection.computerid]:
-                    cid_to_ckey[connection.computerid].append(connection.ckey)
-            else:
-                cid_to_ckey[connection.computerid] = [connection.ckey, ]
-
-        for ip in ip_to_ckey:
-            cache.set("ip_cache_{}".format(ip), ip_to_ckey[ip], 60 * 15)
-        for cid in cid_to_ckey:
-            cache.set("cids_cache_{}".format(cid), cid_to_ckey[cid], 60 * 15)
-
-        cache.set("connection_log_dict", True, 60 * 15)
-        return True
-
     @cache_ckey_callable
     def get_ip_alts(self):
-        self.get_both()
+        ips = []
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT DISTINCT ip FROM hippie_game.connection_log WHERE ckey = %s", [self.ckey])
+            ips = list(itertools.chain.from_iterable(cursor))
 
         ckeys = []
-        ips = set(self.get_connections().values_list('ip', flat=True))
-        for ip in ips:
-            ip_ckeys = cache.get("ip_cache_{}".format(ip))
-            if ip_ckeys is None:
-                continue
-            for ckey in ip_ckeys:
-                if ckey is not self.ckey and ckey not in ckeys:
-                    ckeys.append(ckey)
+        with connection.cursor() as cursor:
+            or_query = " OR ip = %s" * (len(ips) - 1)
+            query = "SELECT DISTINCT ckey FROM hippie_game.connection_log WHERE ip = %s" + or_query
+            cursor.execute(query, ips)
+            ckeys = list(itertools.chain.from_iterable(cursor))
         ckeys.remove(self.ckey)
         return Player.objects.filter(ckey__in=ckeys)
 
     @cache_ckey_callable
     def get_cid_alts(self):
-        self.get_both()
+        cids = []
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT DISTINCT computerid FROM hippie_game.connection_log WHERE ckey = %s", [self.ckey])
+            cids = list(itertools.chain.from_iterable(cursor))
 
         ckeys = []
-        cids = self.get_cids()
-        for cid in cids:
-            cid_ckeys = cache.get("cids_cache_{}".format(cid))
-            if cid_ckeys is None:
-                continue
-            for ckey in cid_ckeys:
-                if ckey is not self.ckey and ckey not in ckeys:
-                    ckeys.append(ckey)
+        with connection.cursor() as cursor:
+            or_query = " OR computerid = %s" * (len(cids) - 1)
+            query = "SELECT DISTINCT ckey FROM hippie_game.connection_log WHERE computerid = %s" + or_query
+            cursor.execute(query, cids)
+            ckeys = list(itertools.chain.from_iterable(cursor))
         ckeys.remove(self.ckey)
         return Player.objects.filter(ckey__in=ckeys)
 
