@@ -7,7 +7,7 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from __future__ import unicode_literals
 
-from django.db import models, connection
+from django.db import models, connections
 from hippie_admin.utils.cache import cache_ckey_callable
 from django.utils import timezone
 from django.core.cache import cache
@@ -450,12 +450,12 @@ class Player(models.Model):
     @cache_ckey_callable
     def get_ip_alts(self):
         ips = []
-        with connection.cursor() as cursor:
+        with connections['ss13'].cursor() as cursor:
             cursor.execute("SELECT DISTINCT ip FROM hippie_game.connection_log WHERE ckey = %s", [self.ckey])
             ips = list(itertools.chain.from_iterable(cursor))
 
         ckeys = []
-        with connection.cursor() as cursor:
+        with connections['ss13'].cursor() as cursor:
             or_query = " OR ip = %s" * (len(ips) - 1)
             query = "SELECT DISTINCT ckey FROM hippie_game.connection_log WHERE ip = %s" + or_query
             cursor.execute(query, ips)
