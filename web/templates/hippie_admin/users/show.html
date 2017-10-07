@@ -73,7 +73,7 @@
                     {{ player.get_cids|length }}
                 </li>
                 <li class="list-group-item"><strong class="list-group-item-heading">Alt Accounts</strong>
-                    {{ alts|length }}
+                    {{ total_alts }}
                 </li>
             </ul>
         </div>
@@ -84,7 +84,7 @@
         <div class="col-lg-12">
             <div class="page-header">
                 <h2>Alt accounts (BETA)
-                    <small>({{ alts|length }})</small>
+                    <small>({{ total_alts }})</small>
                 </h2>
             </div>
             {% if user.is_superuser %}
@@ -93,40 +93,117 @@
                 {% endfor %}</pre>
             {% endif %}
             {% if client == None or client.last_post == None %}
-            <div class="alert alert-warning" role="alert">
-                The ban evasion system has never ran against this player!
-            </div>
+                <div class="alert alert-warning" role="alert">
+                    The ban evasion system has never ran against this player!
+                </div>
             {% endif %}
-            {% for alt in alts %}
-                <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.get_ckey %}"> show</a></li>
-            {% empty %}
-                No alt accounts that we could detect automatically (BETA).
-            {% endfor %}
+
+
+
+            <div class="card text-center">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#alts_hb" role="tab" data-toggle="tab">HB
+                                ({{ hbest_alts|length }})</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#alts_ip_cid" role="tab" data-toggle="tab">IP/CID
+                                ({{ ip_cid_alts|length }})</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#alts_cid" role="tab" data-toggle="tab">CID ({{ cid_alts|length }})</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#alts_ip" role="tab" data-toggle="tab">IP
+                                ({{ ip_alts|length }})</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane in active" id="alts_hb">
+                    <div class="card-body">
+                        <p class="card-text">
+                            <p>These are 100% confirmed matches.</p>
+                            {% for alt in hbest_alts %}
+                                <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.ckey %}"> show</a>
+                                </li>
+                            {% empty %}
+                                No HB alt accounts that we could detect automatically (BETA).
+                            {% endfor %}
+                        </p>
+
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="alts_ip_cid">
+                    <div class="card-body">
+                        <p class="card-text">
+                            <p>These are 99% confirmed matches.</p>
+                            {% for alt in ip_cid_alts %}
+                                <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.ckey %}"> show</a>
+                                </li>
+                            {% empty %}
+                                No IP Address/ComputerID alt accounts that we could detect automatically (BETA).
+                            {% endfor %}
+                        </p>
+
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="alts_cid">
+                    <div class="card-body">
+                        <p class="card-text">
+                            <p>These are 65~% confirmed matches. Be cautious when using these indicators.</p>
+                            {% for alt in cid_alts %}
+                                <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.ckey %}"> show</a>
+                                </li>
+                            {% empty %}
+                                No ComputerID alt accounts that we could detect automatically (BETA).
+                            {% endfor %}
+                        </p>
+
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="alts_ip">
+                    <div class="card-body">
+                        <p class="card-text">
+                            <p>These are 65~% confirmed matches. Be cautious when using these indicators.</p>
+                            {% for alt in ip_alts %}
+                                <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.ckey %}"> show</a>
+                                </li>
+                            {% empty %}
+                                No IP Address alt accounts that we could detect automaticall (BETA).
+                            {% endfor %}
+                        </p>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-        <div class="row mt-4">
+    <div class="row mt-4">
         <div class="col-lg-12">
             <div class="page-header">
                 <h2>CIDs/IPs <a class="btn btn-xs btn-primary collapsed" data-toggle="collapse" href="#cidips"
-                            aria-expanded="false">Show</a>
+                                aria-expanded="false">Show</a>
                     {% with player.get_ips|length as iplen %}
-                    {% with player.get_cids|length as cidlen %}
-                    <small>({{ cidlen|add:iplen }})</small>
-                    {% endwith %}
+                        {% with player.get_cids|length as cidlen %}
+                            <small>({{ cidlen|add:iplen }})</small>
+                        {% endwith %}
                     {% endwith %}
                 </h2>
             </div>
             <div class="collapse" id="cidips" aria-expanded="false">
                 <ul>
-                <h4>IPs:</h4>
-                {% for ip in player.get_ips %}
-                    <li><a href="{% url 'hippie_admin:ip_show' ip %}">{{ ip }}</a></li>
-                {% endfor %}
-                <h4>CIDs:</h4>
-                {% for cid in player.get_cids %}
-                    <li><a href="{% url 'hippie_admin:cid_show' cid %}">{{ cid }}</a></li>
-                {% endfor %}
+                    <h4>IPs:</h4>
+                    {% for ip in player.get_ips %}
+                        <li><a href="{% url 'hippie_admin:ip_show' ip %}">{{ ip }}</a></li>
+                    {% endfor %}
+                    <h4>CIDs:</h4>
+                    {% for cid in player.get_cids %}
+                        <li><a href="{% url 'hippie_admin:cid_show' cid %}">{{ cid }}</a></li>
+                    {% endfor %}
                 </ul>
             </div>
         </div>

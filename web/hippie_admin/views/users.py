@@ -23,11 +23,20 @@ def user_show(request, ckey, template_name='hippie_admin/users/show.html'):
     except Client.DoesNotExist:
         pass
     else:
-        alts = client.get_alts()
+        hbest_alts = client.get_alts()
+        ip_alts = player.get_ip_alts()
+        cid_alts = player.get_cid_alts()
+        ip_cid_alts = set(ip_alts) - (set(ip_alts) - set(cid_alts))
+
+
     context = {
         'player': player,
         'client': client,
-        'alts': alts
+        'hbest_alts': hbest_alts,
+        'ip_alts': ip_alts,
+        'cid_alts': cid_alts,
+        'ip_cid_alts': ip_cid_alts,
+        'total_alts': len(ip_alts) + len(cid_alts) + len(hbest_alts)
     }
     return render(request, template_name, context)
 
