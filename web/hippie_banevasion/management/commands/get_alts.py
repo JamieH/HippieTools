@@ -1,13 +1,32 @@
 from django.core.management.base import BaseCommand, CommandError
 from hippie_banevasion.models import Client
 from tqdm import tqdm
+from cProfile import Profile
 
 class Command(BaseCommand):
     help = 'Find all alt accounts'
 
-    def handle(self, *args, **options):
+    def add_arguments(self, parser):
+        parser.add_argument('--ckey', dest='ckey')
+        parser.add_argument('--profile', action='store_true', default=False, dest='profile')
 
-        clients = Client.objects.all()
+    def handle(self, *args, **options):
+        if options['profile']:
+            profiler = Profile()
+            profiler.runcall(self._handle, *args, **options)
+            profiler.print_stats()
+        else:
+            self._handle(*args, **options)
+
+    def _handle(self, *args, **options):
+
+        clients = None
+        print(options['ckey'])
+        if options['ckey'] is not None:
+            clients = clients = [Client.objects.get(ckey=options['ckey']),]
+        else:
+            clients = Client.objects.all()
+
         #clients = Client.objects.filter(ckey="Bartels")
         #clients = Client.objects.filter(ckey__in=["SuperbDingaling", "Zeopoi", "ItsMeReuben", "ShroudedCorpse", "Aara"])
         evaders = []
