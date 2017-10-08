@@ -10,6 +10,7 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
+from hippie_ss13.models import Player
 from hippie_banevasion import models
 from hippie_banevasion.utils import utils
 from hippie_banevasion.mixins import ComesFromGameserver, HasBody
@@ -37,15 +38,23 @@ class GetAlts(ComesFromGameserver, View):
         if ckey == '':
             raise Http404()
 
-        alt_list = []
+        alt_list = {}
 
         try:
             client = models.Client.objects.get(ckey=ckey)
             alts = client.get_alts()
             for alt in alts:
-                alt_list.append(alt.ckey)
+                alt_list[alt.get_ckey()] = alt.get_player().get_standing()
         except models.Client.DoesNotExist:
             pass
+
+        player = Player.objects.get(ckey=ckey)
+        ip_alts = player.get_ip_alts()
+        cid_alts = player.get_cid_alts()
+        ip_cid_alts = set(ip_alts) - (set(ip_alts) - set(cid_alts))
+
+        for alt in ip_cid_alts:
+            alt_list[alt.ckey] = alt.get_standing()
 
         data = json.dumps(alt_list)
 
