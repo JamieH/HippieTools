@@ -17,13 +17,14 @@ def user_show(request, ckey, template_name='hippie_admin/users/show.html'):
     player = get_object_or_404(Player, ckey=fmt.ckey(ckey))
     client = None
     hbest_alts = []
-
+    fp_alts = []
     try:
         client = Client.objects.get(ckey=player.ckey)
     except Client.DoesNotExist:
         pass
     else:
         hbest_alts = client.get_alts()
+        fp_alts = client.get_fp_alts()
 
     ip_alts = player.get_ip_alts()
     cid_alts = player.get_cid_alts()
@@ -33,10 +34,11 @@ def user_show(request, ckey, template_name='hippie_admin/users/show.html'):
         'player': player,
         'client': client,
         'hbest_alts': hbest_alts,
+        'fp_alts': fp_alts,
         'ip_alts': ip_alts,
         'cid_alts': cid_alts,
         'ip_cid_alts': ip_cid_alts,
-        'total_alts': len(ip_alts) + len(cid_alts) + len(hbest_alts)
+        'total_alts': len(ip_alts) + len(cid_alts) + len(hbest_alts) + len(fp_alts)
     }
     return render(request, template_name, context)
 

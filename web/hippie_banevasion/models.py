@@ -91,6 +91,10 @@ class Client(models.Model):
 
         return recurse_alts(self.ckey, [], self.related_accounts.all())
 
+    def get_fp_alts(self):
+        fps = self.fingerprints.all()
+        return Client.objects.filter(fingerprints__in=fps).distinct().exclude(ckey=self.ckey)
+
 
 class SecurityEvent(models.Model):
     client = models.ForeignKey(Client, null=True, blank=True)

@@ -22,7 +22,7 @@
             <div class="page-header">
                 <h1>{% pretty_player player %}
 
-                    <small>Last seen {{ player.lastseen|naturaltime }} </span> |
+                    <small>Last seen {{ player.lastseen|naturaltime }} |
 
                         <a href="https://www.byond.com/members/{{ client.get_ckey }}" target="_blank">BYOND <i
                                 class="fa fa-external-link"></i></a>
@@ -88,13 +88,14 @@
                 </h2>
             </div>
             {% if user.is_superuser %}
-                <p>last_seen: {{ client.last_seen }} | last_post: {{ client.last_post }}</p>
-                <pre>{% for fp in client.fingerprints.all %}- {{ fp }}
-                {% endfor %}</pre>
+                <p>Last GET: {{ client.last_seen }} | Last POST: {{ client.last_post }}</p>
+                {% spaceless %}
+                <pre>{% for fp in client.fingerprints.all %}FP: {{ fp }}<br>{% endfor %}</pre>
+                {% endspaceless %}
             {% endif %}
             {% if client == None or client.last_post == None %}
                 <div class="alert alert-warning" role="alert">
-                    The ban evasion system has never ran against this player!
+                    The HB ban evasion system has never ran against this player!
                 </div>
             {% endif %}
 
@@ -106,6 +107,10 @@
                         <li class="nav-item">
                             <a class="nav-link active" href="#alts_hb" role="tab" data-toggle="tab">HB
                                 ({{ hbest_alts|length }})</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#alts_fp" role="tab" data-toggle="tab">FP
+                                ({{ fp_alts|length }})</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#alts_ip_cid" role="tab" data-toggle="tab">IP/CID
@@ -127,10 +132,22 @@
                         <p class="card-text">
                             <p>These are 100% confirmed matches.</p>
                             {% for alt in hbest_alts %}
-                                <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.ckey %}"> show</a>
-                                </li>
+                                <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.ckey %}"> show</a></li>
                             {% empty %}
                                 No HB alt accounts that we could detect automatically (BETA).
+                            {% endfor %}
+                        </p>
+
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="alts_fp">
+                    <div class="card-body">
+                        <p class="card-text">
+                            <p>These can mismatch so it's generally best to use them to guide an investigation only.</p>
+                            {% for alt in fp_alts %}
+                                <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.ckey %}"> show</a></li>
+                            {% empty %}
+                                No FP alt accounts that we could detect automatically (BETA).
                             {% endfor %}
                         </p>
 
@@ -141,10 +158,9 @@
                         <p class="card-text">
                             <p>These are 99% confirmed matches.</p>
                             {% for alt in ip_cid_alts %}
-                                <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.ckey %}"> show</a>
-                                </li>
+                                <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.ckey %}"> show</a></li>
                             {% empty %}
-                                No IP Address/ComputerID alt accounts that we could detect automatically (BETA).
+                                No IP Address/ComputerID alt accounts that we could detect automatically.
                             {% endfor %}
                         </p>
 
@@ -155,10 +171,9 @@
                         <p class="card-text">
                             <p>These are 65~% confirmed matches. Be cautious when using these indicators.</p>
                             {% for alt in cid_alts %}
-                                <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.ckey %}"> show</a>
-                                </li>
+                                <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.ckey %}"> show</a></li>
                             {% empty %}
-                                No ComputerID alt accounts that we could detect automatically (BETA).
+                                No ComputerID alt accounts that we could detect automatically.
                             {% endfor %}
                         </p>
 
@@ -169,10 +184,9 @@
                         <p class="card-text">
                             <p>These are 65~% confirmed matches. Be cautious when using these indicators.</p>
                             {% for alt in ip_alts %}
-                                <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.ckey %}"> show</a>
-                                </li>
+                                <li>{{ alt.ckey }} - <a href="{% url 'hippie_admin:user_show' alt.ckey %}"> show</a></li>
                             {% empty %}
-                                No IP Address alt accounts that we could detect automaticall (BETA).
+                                No IP Address alt accounts that we could detect automaticall.
                             {% endfor %}
                         </p>
 
