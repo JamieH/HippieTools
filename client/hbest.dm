@@ -1,4 +1,4 @@
-// This can't be HTTP
+// This can't be HTTPS
 var/global/hbest_api_url = "http://hbest.hippiestation.com"
 
 // This can be HTTPS
