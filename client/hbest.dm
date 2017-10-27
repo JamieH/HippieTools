@@ -42,13 +42,19 @@ var/global/hbest_client_url = "https://hbest.hippiestation.com"
                             var/list/json = list()
                             var/alts = json_decode(alts_json)
                             if (length(alts) > 0)
-                                message_admins("[key_name(C, 0, 0)] has the following alt accounts")
+                                var/sent_alt_msg = FALSE
                                 for(var/ckey in alts)
                                     var/altacc = url_encode(ckey)
-                                    if (world.IsBanned(ckey, C.computer_id, C.address))
-                                        message_admins("    -  BANNED: <a href=\"http://tools.hippiestation.com/tgdb/playerdetails.php?ckey=[altacc]\">[altacc]</a>")
-                                    else
-                                        message_admins("    -  <a href=\"http://tools.hippiestation.com/tgdb/playerdetails.php?ckey=[altacc]\">[altacc]</a>")
+                                    var/state = alts[ckey]
+                                    if (state != "Not banned")
+                                        if (!sent_alt_msg)
+                                            sent_alt_msg = TRUE
+                                            message_admins("[key_name(C, 0, 0)] has the following alt accounts")
+                                            for(var/client/X in GLOB.admins)
+                                                if(!check_rights_for(X, R_ADMIN))   continue
+                                                SEND_SOUND(X, sound('sound/effects/adminhelp.ogg'))
+                                                window_flash(X, ignorepref = TRUE)
+                                        message_admins("    - <a href=\"https://hbest.hippiestation.com/users/[altacc]\">[altacc]</a> : [state]")
 
 client/New()
     . = ..()
